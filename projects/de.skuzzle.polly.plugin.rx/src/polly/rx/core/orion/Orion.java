@@ -28,6 +28,7 @@ public enum Orion implements UniverseFactory {
     private ShipProvider shipProvider;
     private AlienManager alienManager;
     private PathPlanner planner;
+    private FleetHeatMap heatMap;
 
 
 
@@ -36,7 +37,9 @@ public enum Orion implements UniverseFactory {
             PortalProvider portalProvider, AlienManager alienManager,
             PortalUpdater portalUpdater, FleetTracker fleetTracker,
             ResourcePriceProvider priceProvider, VenadUserMapper userMapper,
-            LoginCodeManager loginCodeManager) {
+            LoginCodeManager loginCodeManager,
+            FleetHeatMap heatMap) {
+        ;
 
         if (INSTANCE.quadProvider != null) {
             throw new IllegalStateException("already initialized"); //$NON-NLS-1$
@@ -60,7 +63,9 @@ public enum Orion implements UniverseFactory {
             throw new NullPointerException(VenadUserMapper.class.getSimpleName());
         } else if (loginCodeManager == null) {
             throw new NullPointerException(LoginCodeManager.class.getSimpleName());
-        } // TODO: ship provider
+        } else if (heatMap == null) {
+            throw new NullPointerException(FleetHeatMap.class.getSimpleName());
+        }// TODO: ship provider
 
         INSTANCE.quadProvider = quadProvider;
         INSTANCE.holeProvider = holeProvider;
@@ -73,6 +78,7 @@ public enum Orion implements UniverseFactory {
         INSTANCE.userMapper = userMapper;
         INSTANCE.planner = new PathPlanner(quadProvider, holeProvider);
         INSTANCE.loginCodeManager = loginCodeManager;
+        INSTANCE.heatMap = heatMap;
     }
 
 
@@ -88,7 +94,7 @@ public enum Orion implements UniverseFactory {
 
     @Override
     public WormholeProvider getWormholeProvider() {
-        assert this.checkInitialized();
+        assert checkInitialized();
         return this.holeProvider;
     }
 
@@ -96,7 +102,7 @@ public enum Orion implements UniverseFactory {
 
     @Override
     public QuadrantProvider getQuadrantProvider() {
-        assert this.checkInitialized();
+        assert checkInitialized();
         return this.quadProvider;
     }
 
@@ -104,7 +110,7 @@ public enum Orion implements UniverseFactory {
 
     @Override
     public QuadrantUpdater getQuadrantUpdater() {
-        assert this.checkInitialized();
+        assert checkInitialized();
         return this.quadUpdater;
     }
 
@@ -112,7 +118,7 @@ public enum Orion implements UniverseFactory {
 
     @Override
     public PortalProvider getPortalProvider() {
-        assert this.checkInitialized();
+        assert checkInitialized();
         return this.portalProvider;
     }
 
@@ -131,45 +137,48 @@ public enum Orion implements UniverseFactory {
 
 
     public AlienManager getAlienManager() {
-        assert this.checkInitialized();
+        assert checkInitialized();
         return this.alienManager;
     }
 
 
 
     public ShipProvider getShipProvider() {
-        this.checkInitialized();
+        checkInitialized();
         return this.shipProvider;
     }
 
 
 
     public PathPlanner getPathPlanner() {
-        assert this.checkInitialized();
+        assert checkInitialized();
         return this.planner;
     }
 
 
 
     public FleetTracker getFleetTracker() {
-        assert this.checkInitialized();
+        assert checkInitialized();
         return this.fleetTracker;
     }
 
 
 
     public LoginCodeManager getLoginCodeManager() {
-        assert this.checkInitialized();
+        assert checkInitialized();
         return this.loginCodeManager;
     }
 
 
 
     public VenadUserMapper getUserMapper() {
-        this.checkInitialized();
+        checkInitialized();
         return this.userMapper;
     }
 
+    public FleetHeatMap getHeatMap() {
+        return this.heatMap;
+    }
 
 
     public List<Sector> getPersonalPortals(User user) {

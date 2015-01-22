@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import polly.rx.core.orion.FleetEvent;
+import polly.rx.core.orion.FleetHeatMap;
 import polly.rx.core.orion.FleetListener;
 import polly.rx.core.orion.FleetTracker;
 import polly.rx.core.orion.OrionException;
@@ -20,60 +21,69 @@ import de.skuzzle.polly.tools.Check;
 import de.skuzzle.polly.tools.collections.TemporaryValueMap;
 
 public class MemoryFleetTracker implements FleetTracker {
-    
+
     private final static long MAX_AGE = Milliseconds.fromHours(3);
     private final static long ORION_MAX_AGE = Milliseconds.fromMinutes(1);
-    
+
 
     private final TemporaryValueMap<Integer, Fleet> orionFleets;
     private final TemporaryValueMap<String, LinkedList<Fleet>> fleets;
     private final EventProvider events;
+    private final FleetHeatMap heatMap;
 
-    
 
-    public MemoryFleetTracker() {
+    public MemoryFleetTracker(FleetHeatMap heatMap) {
         this.orionFleets = new TemporaryValueMap<>(ORION_MAX_AGE);
         this.fleets = new TemporaryValueMap<>(MAX_AGE);
         this.events = EventProvider.newDefaultEventProvider();
+        this.heatMap = heatMap;
     }
-    
-    
-    
+
+
+
     @Override
     public void addFleetListener(FleetListener listener) {
         this.events.addListener(FleetListener.class, listener);
     }
-    
-    
-    
+
+
+
     @Override
     public void removeFleetListener(FleetListener listener) {
         this.events.addListener(FleetListener.class, listener);
     }
-    
-    
-    
+
+
+
     private Date getThresholdDate() {
         return new Date(Time.currentTimeMillis() - MAX_AGE);
     }
 
-    
+
 
     @Override
-    public synchronized void updateOrionFleets(String reporter, 
+    public synchronized void updateOrionFleets(String reporter,
             Collection<? extends Fleet> ownFleets) throws OrionException {
-        
+
         for (final Fleet f : ownFleets) {
             Check.number(f.getRevorixId()).isPositiveOrZero();
-            this.orionFleets.put(f.getRevorixId(), f);
+            final Fleet prev = this.orionFleets.put(f.getRevorixId(), f);
+            if (prev == null || !prev.getSector().equals(f.getSector())) {
+                // This fleet has been moved!
+                this.heatMap.update(f);
+                System.out.printf("%s auf %s: %d%n",
+                        f.getOwnerName(),
+                        f.getSector(),
+                        this.heatMap.getTimes(f.getOwnerName(), f.getSector()));
+            }
         }
-        this.events.dispatch(FleetListener.class, 
-                new FleetEvent(this, reporter, new ArrayList<>(ownFleets)), 
+        this.events.dispatch(FleetListener.class,
+                new FleetEvent(this, reporter, new ArrayList<>(ownFleets)),
                 FleetListener::ownFleetsUpdated);
     }
 
 
-    
+
     private void clearOldestFleets(Collection<Fleet> fleets, Fleet current,
             Date threshold) {
         final Iterator<Fleet> it = fleets.iterator();
@@ -84,8 +94,8 @@ public class MemoryFleetTracker implements FleetTracker {
             }
         }
     }
-    
-    
+
+
 
     @Override
     public synchronized Collection<? extends Fleet> getOrionUserFleets() {
@@ -111,25 +121,25 @@ public class MemoryFleetTracker implements FleetTracker {
 
 
     @Override
-    public void updateFleets(String reporter, 
+    public void updateFleets(String reporter,
             Collection<? extends Fleet> fleets) throws OrionException {
-        final Date threshold = this.getThresholdDate();
+        final Date threshold = getThresholdDate();
         synchronized (this.fleets) {
             for (final Fleet fleet : fleets) {
                 LinkedList<Fleet> existing = this.fleets.get(fleet.getOwnerName());
                 if (existing == null) {
                     existing = new LinkedList<>();
                 }
-                
-                this.clearOldestFleets(existing, fleet, threshold);
+
+                clearOldestFleets(existing, fleet, threshold);
                 existing.addFirst(fleet);
-                // always put, to prevent automatic deletion 
+                // always put, to prevent automatic deletion
                 this.fleets.put(fleet.getName(), existing);
             }
         }
-        
-        this.events.dispatch(FleetListener.class, 
-                new FleetEvent(this, reporter, new ArrayList<>(fleets)), 
+
+        this.events.dispatch(FleetListener.class,
+                new FleetEvent(this, reporter, new ArrayList<>(fleets)),
                 FleetListener::fleetsUpdated);
     }
 

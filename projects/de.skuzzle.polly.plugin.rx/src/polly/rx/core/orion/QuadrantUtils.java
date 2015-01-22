@@ -33,7 +33,7 @@ import polly.rx.parsing.ParseException;
 import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
 public final class QuadrantUtils {
-    
+
     private final static ImageObserver NOP_IMAGE_OBSERVER = new ImageObserver() {
         @Override
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width,
@@ -41,11 +41,11 @@ public final class QuadrantUtils {
             return false;
         }
     };
-    
+
 
     /** Semantical constant for {@link #reachableAliens(Sector, boolean)} parameter */
     public final static boolean AGGRESSIVE_ONLY = true;
-    
+
     /** A Builder which ignores wormholes */
     private final static class LocalBuilder implements LazyBuilder<Sector, Costs> {
 
@@ -62,7 +62,7 @@ public final class QuadrantUtils {
 
         @Override
         public void collectIncident(Graph<Sector, Costs> source, Sector currentNode) {
-            if (!done.add(currentNode)) {
+            if (!this.done.add(currentNode)) {
                 return;
             }
             for (int i = -1; i < 2; ++i) {
@@ -75,9 +75,9 @@ public final class QuadrantUtils {
                     final int y = currentNode.getY() + j;
                     final boolean diagonal = Math.abs(i) == 1 && Math.abs(j) == 1;
 
-                    if (x >= 0 && y >= 0 && x <= quadrant.getMaxX()
-                            && y <= quadrant.getMaxY()) {
-                        final Sector neighbor = quadrant.getSector(x, y);
+                    if (x >= 0 && y >= 0 && x <= this.quadrant.getMaxX()
+                            && y <= this.quadrant.getMaxY()) {
+                        final Sector neighbor = this.quadrant.getSector(x, y);
 
                         if (neighbor.getType() != SectorType.NONE) {
                             final Graph<Sector, Costs>.Node current = source
@@ -96,9 +96,9 @@ public final class QuadrantUtils {
 
     private QuadrantUtils() {}
 
-    
-    
-    private final static EdgeCosts<Costs> COST_CALCULATOR = 
+
+
+    private final static EdgeCosts<Costs> COST_CALCULATOR =
             data -> data.isDiagonal ? 1.0 : 2.0;
 
     private static class Costs {
@@ -109,8 +109,8 @@ public final class QuadrantUtils {
             this.isDiagonal = isDiagonal;
         }
     }
-    
-    
+
+
 
     public interface SectorFilter {
 
@@ -143,7 +143,7 @@ public final class QuadrantUtils {
      * Parses a Sector specification given as
      * <tt>&lt;Quadname&gt; &lt;x&gt; &lt;y&gt;
      * and returns the respective Sector instance retrieved from {@link Orion}.
-     * 
+     *
      * @param s
      *            The String to parse.
      * @return The Sector.
@@ -156,7 +156,7 @@ public final class QuadrantUtils {
             // prepare string
             s = s.replace(",", " ");  //$NON-NLS-1$//$NON-NLS-2$
             s = s.replaceAll("\\s{2,}", " ");  //$NON-NLS-1$//$NON-NLS-2$
-            
+
             int i = s.lastIndexOf(' ');
             final int y = Integer.parseInt(s.substring(i + 1));
             s = s.substring(0, i);
@@ -169,9 +169,9 @@ public final class QuadrantUtils {
             throw new ParseException(MSG.routeParseError, e);
         }
     }
-    
-    
-    
+
+
+
     public static boolean reachable(Sector source, Sector target) {
         if (!source.getQuadName().equals(target.getQuadName())) {
             return false;
@@ -209,8 +209,8 @@ public final class QuadrantUtils {
         return reachableAliens(source, false);
     }
 
-    
-    
+
+
     public static List<AlienSpawn> reachableAliens(Sector source, boolean aggressiveOnly) {
         final List<? extends AlienSpawn> spawns = Orion.INSTANCE.getAlienManager()
                 .getSpawnsByQuadrant(source.getQuadName());
@@ -270,26 +270,26 @@ public final class QuadrantUtils {
         }
         return result;
     }
-    
-    
-    
+
+
+
     public static enum DrawSectorMode {
         DARK(0.7f),
         BRIGHT(1.3f);
-        
+
         private final float factor;
-        
-        
+
+
         private DrawSectorMode(float factor) {
             this.factor = factor;
         }
     }
-    
-    
-    
-    public static OutputStream createSectorImageAsPNGStream(SectorType type, 
+
+
+
+    public static OutputStream createSectorImageAsPNGStream(SectorType type,
             DrawSectorMode mode) {
-        
+
         final BufferedImage img = createSectorImage(type, mode);
         final OutputStream out = new FastByteArrayOutputStream();
         try {
@@ -300,21 +300,70 @@ public final class QuadrantUtils {
         }
         return out;
     }
-    
-    
-    
+
+
+
     public static BufferedImage createSectorImage(SectorType type, DrawSectorMode mode) {
         final BufferedImage img = type.getImage();
-        final BufferedImage cpy = new BufferedImage(img.getWidth(), img.getHeight(), 
+        final BufferedImage cpy = new BufferedImage(img.getWidth(), img.getHeight(),
                 BufferedImage.TYPE_INT_RGB);
-        cpy.getGraphics().drawImage(img, 0, 0, img.getWidth(), img.getHeight(), 
+        cpy.getGraphics().drawImage(img, 0, 0, img.getWidth(), img.getHeight(),
                 NOP_IMAGE_OBSERVER);
         final float scaleFactor = mode.factor;
         final RescaleOp op = new RescaleOp(scaleFactor, 0, null);
         return op.filter(cpy, null);
     }
 
+    public static BufferedImage drawHeatMap(Quadrant quad, String user,
+            FleetHeatMap heatMap) {
+        final Map<Sector, Integer> map = heatMap.getSectorHeatMap(user, quad);
+        final int max = getMax(map);
+        final int min = 0;
 
+        final int ss = 10; // sector size in pixels
+        final Color background = new Color(51, 51, 102, 255);
+        final BufferedImage img = new BufferedImage(quad.getMaxX() * ss, quad.getMaxY()
+                * ss, BufferedImage.TYPE_INT_ARGB);
+
+        final Graphics2D g = img.createGraphics();
+        g.setColor(background);
+        g.fillRect(0, 0, img.getWidth(), img.getHeight());
+
+        for (int y = 0; y < quad.getMaxY(); ++y) {
+            for (int x = 0; x < quad.getMaxX(); ++x) {
+                final Sector s = quad.getSector(x + 1, y + 1);
+                if (s.getType() != SectorType.NONE) {
+                    final Integer actual = map.get(s);
+                    if (actual == null || actual == 0) {
+                        final BufferedImage sectorImage = s.getType().getImage();
+                        g.drawImage(sectorImage, x * ss, y * ss, ss, ss, NOP_IMAGE_OBSERVER);
+                    } else {
+                        final Color color = getColor(min, max, actual);
+                        g.setBackground(color);
+                        g.setColor(color);
+                        g.fillRect(x * ss, y * ss, ss, ss);
+                    }
+                }
+            }
+        }
+        return img;
+    }
+
+    private static Color getColor(int min, int max, int actual) {
+        final double percentage = (double) actual / (double) max;
+        return getColor(1.0 - percentage);
+    }
+
+    private static Color getColor(double power) {
+        final double H = power * 0.4; // Hue
+        final double S = 0.9; // Saturation
+        final double B = 0.9; // Brightness
+        return Color.getHSBColor((float) H, (float) S, (float) B);
+    }
+
+    private static int getMax(Map<Sector, Integer> m) {
+        return m.values().stream().max(Integer::compare).orElse(0);
+    }
 
     public static BufferedImage createQuadImage(Quadrant quad) {
         final int ss = 10; // sector size in pixels

@@ -30,6 +30,7 @@ import polly.rx.core.orion.OrionChatProvider;
 import polly.rx.core.orion.ResourcePriceProvider;
 import polly.rx.core.orion.VenadUserMapper;
 import polly.rx.core.orion.WormholeProvider;
+import polly.rx.core.orion.datasource.DBFleetHeatMap;
 import polly.rx.core.orion.datasource.DBOrionAccess;
 import polly.rx.core.orion.datasource.DBOrionChatProvider;
 import polly.rx.core.orion.datasource.MemoryFleetTracker;
@@ -91,7 +92,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String TRAINER_ROLE       = "polly.roles.TRAINER"; //$NON-NLS-1$
     public final static String SBE_MANAGER_ROLE   = "polly.roles.SBE_MANAGER"; //$NON-NLS-1$
     public final static String ORION_ROLE         = "polly.roles.ORION"; //$NON-NLS-1$
-    
+
     public final static String RESSOURCES_PERMISSION             = "polly.permission.RESSOURCES"; //$NON-NLS-1$
     public final static String ADD_TRAIN_PERMISSION              = "polly.permission.ADD_TRAIN"; //$NON-NLS-1$
     public final static String DELIVER_TRAIN_PERMISSION          = "polly.permission.DELIVER_TRAIN"; //$NON-NLS-1$
@@ -112,47 +113,47 @@ public class MyPlugin extends PollyPlugin {
     private static final String VENAD_DEFAULT = "<unbekannt>"; //$NON-NLS-1$
     public final static String DOCK_LEVEL = "DOCK_LEVEL"; //$NON-NLS-1$
     public static final String REPAIR_TIME_WARNING = "REPAIR_TIME_WARNING"; //$NON-NLS-1$
-    
-    
-    private FleetDBManager fleetDBManager;
-    private TrainManagerV2 trainManager;
-    private ScoreBoardManager sbeManager;
-    private AZEntryManager azManager;
+
+
+    private final FleetDBManager fleetDBManager;
+    private final TrainManagerV2 trainManager;
+    private final ScoreBoardManager sbeManager;
+    private final AZEntryManager azManager;
     private ImageDatabase captchaDatabase;
     private RxCaptchaKiller captchaKiller;
-    private OrionChatProvider chatProvider;
-    
-    
-    
-    public MyPlugin(MyPolly myPolly) 
+    private final OrionChatProvider chatProvider;
+
+
+
+    public MyPlugin(MyPolly myPolly)
                 throws DuplicatedSignatureException, IncompatiblePluginException {
         super(myPolly);
-        
-        
+
+
         this.chatProvider = new DBOrionChatProvider(myPolly.persistence());
-        this.addCommand(new IGMCommand(myPolly, chatProvider));
-        
+        addCommand(new IGMCommand(myPolly, this.chatProvider));
+
         /* capi train related */
         this.trainManager = new TrainManagerV2(myPolly);
-        this.getMyPolly().persistence().registerEntity(TrainEntityV3.class);
-        
-        this.addCommand(new AddTrainCommand(myPolly, this.trainManager));
-        this.addCommand(new CloseTrainCommand(myPolly, this.trainManager));
-        this.addCommand(new MyTrainsCommand(myPolly, this.trainManager));
-        this.addCommand(new DeliverTrainCommand(myPolly, this.trainManager));
-        this.addCommand(new VenadCommand(myPolly));
-        this.addCommand(new MyVenadCommand(myPolly));
-        this.addCommand(new IPCommand(myPolly));
-        this.addCommand(new CrackerCommand(myPolly));
-        this.addCommand(new RessComand(myPolly));
-        this.addCommand(new UrlAnonymizationCommand(myPolly));
-        
+        getMyPolly().persistence().registerEntity(TrainEntityV3.class);
+
+        addCommand(new AddTrainCommand(myPolly, this.trainManager));
+        addCommand(new CloseTrainCommand(myPolly, this.trainManager));
+        addCommand(new MyTrainsCommand(myPolly, this.trainManager));
+        addCommand(new DeliverTrainCommand(myPolly, this.trainManager));
+        addCommand(new VenadCommand(myPolly));
+        addCommand(new MyVenadCommand(myPolly));
+        addCommand(new IPCommand(myPolly));
+        addCommand(new CrackerCommand(myPolly));
+        addCommand(new RessComand(myPolly));
+        addCommand(new UrlAnonymizationCommand(myPolly));
+
         /* fleet db related */
         this.fleetDBManager = new FleetDBManager(myPolly.persistence());
         this.sbeManager = new ScoreBoardManager(myPolly.persistence());
         this.azManager = new AZEntryManager(myPolly);
 
-        
+
         myPolly.persistence().registerEntity(BattleReport.class);
         myPolly.persistence().registerEntity(BattleReportShip.class);
         myPolly.persistence().registerEntity(BattleDrop.class);
@@ -161,64 +162,64 @@ public class MyPlugin extends PollyPlugin {
         myPolly.persistence().registerEntity(FleetScanShip.class);
         myPolly.persistence().registerEntity(ScoreBoardEntry.class);
         myPolly.persistence().registerEntity(AZEntry.class);
-        
+
         // orion
         myPolly.persistence().registerEntity(DBProduction.class);
         myPolly.persistence().registerEntity(DBSector.class);
         myPolly.persistence().registerEntity(DBQuadrant.class);
         myPolly.persistence().registerEntity(DBPortal.class);
-        
-        this.addCommand(new RankCommand(myPolly, this.sbeManager));
-        
-        
+
+        addCommand(new RankCommand(myPolly, this.sbeManager));
+
+
         myPolly.webInterface().addCategory(new MenuCategory(0, MSG.httpRxCategory));
         myPolly.webInterface().getServer().addController(
-                new RXController(myPolly, fleetDBManager, sbeManager, azManager));
-        
-        
-        final HTMLTableModel<FleetScan> scanModel = new FleetScanTableModel(fleetDBManager);
+                new RXController(myPolly, this.fleetDBManager, this.sbeManager, this.azManager));
+
+
+        final HTMLTableModel<FleetScan> scanModel = new FleetScanTableModel(this.fleetDBManager);
         final HTMLTable<FleetScan> fleetScanTable = new HTMLTable<FleetScan>("fleetScans", scanModel, myPolly); //$NON-NLS-1$
-        
-        final HTMLTableModel<FleetScanShip> scanShipModel = new FleetScanShipTableModel(fleetDBManager);
+
+        final HTMLTableModel<FleetScanShip> scanShipModel = new FleetScanShipTableModel(this.fleetDBManager);
         final HTMLTable<FleetScanShip> fleetScanShipTable = new HTMLTable<FleetScanShip>("ships", scanShipModel, myPolly); //$NON-NLS-1$
-        
-        final HTMLTableModel<FleetScan> scansWithShip = new FleetScansWithShipModel(fleetDBManager);
+
+        final HTMLTableModel<FleetScan> scansWithShip = new FleetScansWithShipModel(this.fleetDBManager);
         final HTMLTable<FleetScan> scansWithShipTable = new HTMLTable<FleetScan>("scansWithShip", scansWithShip, myPolly); //$NON-NLS-1$
-        
-        final HTMLTableModel<FleetScanShip> shipsForScanModel = new ShipsForScanTableModel(fleetDBManager);
+
+        final HTMLTableModel<FleetScanShip> shipsForScanModel = new ShipsForScanTableModel(this.fleetDBManager);
         final HTMLTable<FleetScanShip> shipsForScanTable = new HTMLTable<FleetScanShip>("ships", shipsForScanModel, myPolly); //$NON-NLS-1$
-        
-        final HTMLTableModel<ScoreBoardEntry> scoreboard = new ScoreboardTableModel(sbeManager);
+
+        final HTMLTableModel<ScoreBoardEntry> scoreboard = new ScoreboardTableModel(this.sbeManager);
         final HTMLTable<ScoreBoardEntry> scoreboardTable = new HTMLTable<ScoreBoardEntry>("scoreboard", scoreboard, myPolly); //$NON-NLS-1$
-        
-        final HTMLTableModel<ScoreBoardEntry> scoreboardDetail = new ScoreboardDetailModel(sbeManager);
+
+        final HTMLTableModel<ScoreBoardEntry> scoreboardDetail = new ScoreboardDetailModel(this.sbeManager);
         final HTMLTable<ScoreBoardEntry> scoreboardDetailTable = new HTMLTable<>("entries", scoreboardDetail, myPolly); //$NON-NLS-1$
-        
-        final HTMLTableModel<BattleReport> reportModel = new BattleReportModel(fleetDBManager);
+
+        final HTMLTableModel<BattleReport> reportModel = new BattleReportModel(this.fleetDBManager);
         final HTMLTable<BattleReport> reportTabble = new HTMLTable<BattleReport>("reports", reportModel, myPolly); //$NON-NLS-1$
         final StatisticsGatherer statsGatherer = new StatisticsGatherer();
         reportTabble.addModelListener(statsGatherer);
-        
-        
-        final HTMLTableModel<TrainEntityV3> trainingModel = new TrainingTableModel(trainManager);
+
+
+        final HTMLTableModel<TrainEntityV3> trainingModel = new TrainingTableModel(this.trainManager);
         final HTMLTable<TrainEntityV3> trainTable = new HTMLTable<>("closedTrainings", trainingModel, myPolly); //$NON-NLS-1$
-        
-        final HTMLTableModel<TrainEntityV3> openTrainingModel = new OpenTrainingsModel(trainManager);
+
+        final HTMLTableModel<TrainEntityV3> openTrainingModel = new OpenTrainingsModel(this.trainManager);
         final HTMLTable<TrainEntityV3> openTrainTable = new HTMLTable<>("openTrainings", openTrainingModel, myPolly); //$NON-NLS-1$
-        
-        final HTMLTableModel<BattleReportShip> reportAttackerShipModel = new BattleReportShipModel(fleetDBManager, true);
-        final HTMLTableModel<BattleReportShip> reportDefenderShipModel = new BattleReportShipModel(fleetDBManager, false);
+
+        final HTMLTableModel<BattleReportShip> reportAttackerShipModel = new BattleReportShipModel(this.fleetDBManager, true);
+        final HTMLTableModel<BattleReportShip> reportDefenderShipModel = new BattleReportShipModel(this.fleetDBManager, false);
         final HTMLTable<BattleReportShip> reportAttackerShipTable = new HTMLTable<>("attackerShips", reportAttackerShipModel, myPolly); //$NON-NLS-1$
         final HTMLTable<BattleReportShip> reportDefenderShipTable = new HTMLTable<>("defenderShips", reportDefenderShipModel, myPolly); //$NON-NLS-1$
-        
+
         final HTMLTableModel<AlienRace> alienRaceModel = new AlienRaceModel();
         final HTMLTable<AlienRace> alienRaceTable = new HTMLTable<>("alienRaces", alienRaceModel, myPolly); //$NON-NLS-1$
         final HTMLTableModel<AlienSpawn> alienSpawnModel = new AlienSpawnModel();
         final HTMLTable<AlienSpawn> alienSpawnTable = new HTMLTable<>("alienSpawns", alienSpawnModel, myPolly); //$NON-NLS-1$
-        
+
         final HTMLTableModel<Portal> portalModel = new PortalModel();
         final HTMLTable<Portal> portalTable = new HTMLTable<>("portals", portalModel, myPolly); //$NON-NLS-1$
-        
+
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScans", fleetScanTable); //$NON-NLS-1$
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScanShips", fleetScanShipTable); //$NON-NLS-1$
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scansWithShip", scansWithShipTable); //$NON-NLS-1$
@@ -226,28 +227,28 @@ public class MyPlugin extends PollyPlugin {
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboard", scoreboardTable); //$NON-NLS-1$
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboardDetail", scoreboardDetailTable); //$NON-NLS-1$
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allReports", reportTabble); //$NON-NLS-1$
-        
+
         myPolly.webInterface().getServer().addHttpEventHandler("/api/reportAttackerShips", reportAttackerShipTable); //$NON-NLS-1$
         myPolly.webInterface().getServer().addHttpEventHandler("/api/reportDefenderShips", reportDefenderShipTable); //$NON-NLS-1$
-        
+
         myPolly.webInterface().getServer().addHttpEventHandler("/api/alienRaces", alienRaceTable); //$NON-NLS-1$
         myPolly.webInterface().getServer().addHttpEventHandler("/api/alienSpawns", alienSpawnTable); //$NON-NLS-1$
-        
+
         myPolly.webInterface().getServer().addHttpEventHandler("/api/portals", portalTable); //$NON-NLS-1$
-        
+
         myPolly.webInterface().getServer().addHttpEventHandler("/api/closedTrainings", trainTable); //$NON-N //$NON-NLS-1$
         myPolly.webInterface().getServer().addHttpEventHandler("/api/openTrainings", openTrainTable); //$NON-N //$NON-NLS-1$
     }
-    
-    
-    
+
+
+
     @Override
     protected void actualDispose() throws DisposingException {
         super.actualDispose();
     }
-    
-    
-    
+
+
+
     @Override
     public Set<String> getContainedPermissions() {
         Set<String> result = new TreeSet<String>();
@@ -268,143 +269,145 @@ public class MyPlugin extends PollyPlugin {
         result.addAll(super.getContainedPermissions());
         return result;
     }
-    
-    
-    
+
+
+
     @Override
     public void assignPermissions(RoleManager roleManager)
             throws RoleException, DatabaseException {
-        
+
         roleManager.createRole(TRAINER_ROLE);
         roleManager.assignPermission(TRAINER_ROLE, ADD_TRAIN_PERMISSION);
         roleManager.assignPermission(TRAINER_ROLE, CLOSE_TRAIN_PERMISSION);
         roleManager.assignPermission(TRAINER_ROLE, DELIVER_TRAIN_PERMISSION);
-        
+
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, MYTRAINS_PERMISSION);
-        
+
         roleManager.createRole(FLEET_MANAGER_ROLE);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
-        
+
         roleManager.createRole(SBE_MANAGER_ROLE);
         roleManager.assignPermission(SBE_MANAGER_ROLE, SBE_PERMISSION);
         roleManager.assignPermission(SBE_MANAGER_ROLE, RANK_PERMISSION);
-        
+
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, IP_PERMISSION);
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, CRACKER_PERMISSION);
-        
+
         roleManager.createRole(ORION_ROLE);
         roleManager.assignPermission(ORION_ROLE, OrionController.VIEW_ORION_PREMISSION);
         roleManager.assignPermission(ORION_ROLE, OrionController.WRITE_ORION_PREMISSION);
         roleManager.assignPermission(ORION_ROLE, OrionController.ROUTE_ORION_PREMISSION);
         roleManager.assignPermission(ORION_ROLE, OrionController.MANAGE_RACE_PERMISSION);
-        
+
         super.assignPermissions(roleManager);
     }
 
-    
-    
+
+
     @Override
     public void onLoad() throws PluginException {
-        
+
         // Create captcha database#
-        final File pluginFolder = this.getPluginFolder();
+        final File pluginFolder = getPluginFolder();
         final File captchas = new File(pluginFolder, "captchas"); //$NON-NLS-1$
         if (!captchas.exists()) {
             captchas.mkdirs();
         }
-        this.captchaDatabase = new ImageDatabase(captchas.getPath(), 
+        this.captchaDatabase = new ImageDatabase(captchas.getPath(),
                 new File(captchas, "db.txt").getPath()); //$NON-NLS-1$
         this.captchaKiller = new RxCaptchaKiller(this.captchaDatabase);
-        
+
         // relearn database
         final File learning = new File(pluginFolder, "learning"); //$NON-NLS-1$
         if (learning.exists()) {
             this.captchaDatabase.learnFrom(learning.getPath());
         }
-        
-        
+
+
         // ORION
-        final DBOrionAccess dboa = new DBOrionAccess(this.getMyPolly().persistence());
+        final DBOrionAccess dboa = new DBOrionAccess(getMyPolly().persistence());
         final WormholeProvider holeProvider = new WLSWormholeProvider();
-        final FleetTracker tracker = new MemoryFleetTracker();
+        final DBFleetHeatMap heatMap = new DBFleetHeatMap(getMyPolly().persistence());
+        final FleetTracker tracker = new MemoryFleetTracker(heatMap);
         final ResourcePriceProvider priceProvider = new QZoneResourcePriceProvider();
-        final VenadUserMapper userMapper = new VenadUserMapper(this.getMyPolly().users());
+        final VenadUserMapper userMapper = new VenadUserMapper(getMyPolly().users());
         final LoginCodeManager loginCodeManager = new LoginCodeManager(this.captchaKiller);
         Orion.initialize(
-                dboa.getQuadrantProvider(), 
-                dboa.getQuadrantUpdater(), 
-                holeProvider, 
+                dboa.getQuadrantProvider(),
+                dboa.getQuadrantUpdater(),
+                holeProvider,
                 dboa.getPortalProvider(),
                 dboa.getAlienManager(),
                 dboa.getPortalUpdater(),
-                tracker, 
+                tracker,
                 priceProvider,
                 userMapper,
-                loginCodeManager
+                loginCodeManager,
+                heatMap
             );
-        
+
         final OrionChatController chatController = new OrionChatController(
-                this.getMyPolly(), this.chatProvider);
-        this.getMyPolly().webInterface().getServer().addController(chatController);
-        
-        final OrionController oc = new OrionController(this.getMyPolly(), azManager);
+                getMyPolly(), this.chatProvider);
+        getMyPolly().webInterface().getServer().addController(chatController);
+
+        final OrionController oc = new OrionController(getMyPolly(), this.azManager);
         final OrionNewsProvider newsProvider = new OrionNewsProvider(
-                this.getMyPolly(),
-                Orion.INSTANCE.getFleetTracker(), 
+                getMyPolly(),
+                Orion.INSTANCE.getFleetTracker(),
                 Orion.INSTANCE.getPortalUpdater(),
                 this.trainManager);
-        
-        this.getMyPolly().webInterface().getServer().addController(oc);
-        this.getMyPolly().webInterface().getServer().addHttpEventHandler(
+
+        getMyPolly().webInterface().getServer().addController(oc);
+        getMyPolly().webInterface().getServer().addHttpEventHandler(
                 OrionNewsProvider.NEWS_URL, newsProvider);
-        
+
         try {
-            this.addCommand(new RouteCommand(this.getMyPolly()));
+            addCommand(new RouteCommand(getMyPolly()));
         } catch (DuplicatedSignatureException e1) {
             e1.printStackTrace();
         }
-        
-        
+
+
         try {
-            this.getMyPolly().users().addAttribute(REPAIR_TIME_WARNING, 
+            getMyPolly().users().addAttribute(REPAIR_TIME_WARNING,
                     new Types.TimespanType(0), MSG.pluginRepairTimeWarning,
                     MSG.httpRxCategory, Constraints.TIMESPAN);
-            this.getMyPolly().users().addAttribute(VENAD, 
-                new Types.StringType(VENAD_DEFAULT), 
-                MSG.pluginVenadDesc, 
+            getMyPolly().users().addAttribute(VENAD,
+                new Types.StringType(VENAD_DEFAULT),
+                MSG.pluginVenadDesc,
                 MSG.httpRxCategory);
-            this.getMyPolly().users().addAttribute(CRACKER, new Types.NumberType(0.0),
-                MSG.pluginCrackerDesc, 
+            getMyPolly().users().addAttribute(CRACKER, new Types.NumberType(0.0),
+                MSG.pluginCrackerDesc,
                 MSG.httpRxCategory, Constraints.INTEGER);
-            this.getMyPolly().users().addAttribute(AUTO_REMIND, 
-                    new Types.BooleanType(false), 
-                    MSG.pluginAutoRemindDesc, 
+            getMyPolly().users().addAttribute(AUTO_REMIND,
+                    new Types.BooleanType(false),
+                    MSG.pluginAutoRemindDesc,
                     MSG.httpRxCategory);
-            this.getMyPolly().users().addAttribute(AUTO_REMIND_AZ, 
-                    new Types.TimespanType(840), MSG.pluginAutoRemindAzDesc, 
+            getMyPolly().users().addAttribute(AUTO_REMIND_AZ,
+                    new Types.TimespanType(840), MSG.pluginAutoRemindAzDesc,
                     MSG.httpRxCategory, Constraints.TIMESPAN);
-            this.getMyPolly().users().addAttribute(LOW_PZ_WARNING, 
-                    new Types.NumberType(0.0), 
-                    MSG.pluginLowPzWarningDesc, 
+            getMyPolly().users().addAttribute(LOW_PZ_WARNING,
+                    new Types.NumberType(0.0),
+                    MSG.pluginLowPzWarningDesc,
                     MSG.httpRxCategory, Constraints.INTEGER);
-            
-            this.getMyPolly().users().addAttribute(PORTALS, new Types.StringType(""),  //$NON-NLS-1$
-                    MSG.pluginPortalDesc, MSG.httpRxCategory, 
+
+            getMyPolly().users().addAttribute(PORTALS, new Types.StringType(""),  //$NON-NLS-1$
+                    MSG.pluginPortalDesc, MSG.httpRxCategory,
                     new SectorListAttributeConstraint());
-            
-            this.getMyPolly().users().addAttribute(DOCK_LEVEL, 
+
+            getMyPolly().users().addAttribute(DOCK_LEVEL,
                     new Types.NumberType(1),
                     MSG.pluginDockLvlDescription, MSG.httpRxCategory,
                     new DockLevelConstraint());
-            
-            
+
+
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }
-        
+
         try {
             this.fleetDBManager.cleanInvalidBattleReports();
         } catch (DatabaseException e) {

@@ -20,6 +20,7 @@ import javax.imageio.ImageIO;
 
 import polly.rx.MSG;
 import polly.rx.core.AZEntryManager;
+import polly.rx.core.orion.FleetHeatMap;
 import polly.rx.core.orion.LoginCode;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.OrionException;
@@ -67,12 +68,8 @@ import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.answers.HttpInputStreamAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.PersistenceManagerV2;
-import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
-import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.TimespanType;
-import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
@@ -96,7 +93,7 @@ public class OrionController extends PollyController {
     public final static String PAGE_QUAD_LAYOUT = "/pages/orion/quadlayout"; //$NON-NLS-1$
     public final static String PAGE_ALIEN_MANAGEMENT = "/pages/orion/manageAliens"; //$NON-NLS-1$
     public final static String PAGE_PORTALS = "/pages/orion/portals"; //$NON-NLS-1$
-    
+
     public final static String API_GET_QUADRANT = "/api/orion/quadrant"; //$NON-NLS-1$
     public final static String API_GET_SECTOR_INFO = "/api/orion/sector"; //$NON-NLS-1$
     public final static String API_SET_ROUTE_TO = "/api/orion/routeTo"; //$NON-NLS-1$
@@ -117,7 +114,8 @@ public class OrionController extends PollyController {
     public final static String API_ADD_SPAWN = "/api/addSpawn"; //$NON-NLS-1$
     public final static String API_REMOVE_SPAWN = "/api/orion/removeSpawn"; //$NON-NLS-1$
     public final static String API_GET_PRICES = "/api/orion/prices"; //$NON-NLS-1$
-    
+    public final static String API_HEAT_MAP = "/api/orion/heatMap"; //$NON-NLS-1$
+
     private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
     private final static String CONTENT_SECTOR_INFO = "/polly/rx/httpv2/view/orion/sec_info.html"; //$NON-NLS-1$
@@ -127,7 +125,7 @@ public class OrionController extends PollyController {
     private final static String CONTENT_ROUTE_SINGLE = "/polly/rx/httpv2/view/orion/route.single.html"; //$NON-NLS-1$
     private final static String CONTENT_SHARE_ROUTE = "/polly/rx/httpv2/view/orion/route.share.html"; //$NON-NLS-1$
     private final static String CONTENT_PORTALS = "/polly/rx/httpv2/view/portals.overview.html"; //$NON-NLS-1$
-    
+
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
     private final static String ORION_NAME_KEY = "htmlOrionName"; //$NON-NLS-1$
     private final static String ORION_DESC_KEY = "htmlOrionDesc"; //$NON-NLS-1$
@@ -135,8 +133,8 @@ public class OrionController extends PollyController {
     private final static String ALIEN_MANAGEMENT_DESC_KEY = "htmlOrionAlienManagementDesc"; //$NON-NLS-1$
     private final static String PORTALS_NAME_KEY = "htmlPortals"; //$NON-NLS-1$
     private final static String PORTALS_DESC_KEY = "htmlPortalsDesc"; //$NON-NLS-1$
-    
-    
+
+
     private final static String ROUTE_FROM_KEY = "routeFrom"; //$NON-NLS-1$
     private final static String ROUTE_TO_KEY = "routeTo"; //$NON-NLS-1$
     private final static String ROUTE_OPTIONS_KEY = "routeOptions"; //$NON-NLS-1$
@@ -150,8 +148,9 @@ public class OrionController extends PollyController {
 
 
 
+        @Override
         public String getQuadId() {
-            return this.getQuadName().replace(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+            return getQuadName().replace(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
@@ -163,8 +162,9 @@ public class OrionController extends PollyController {
 
 
 
+        @Override
         public String getQuadId() {
-            return this.getName().replace(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+            return getName().replace(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
 
@@ -240,21 +240,21 @@ public class OrionController extends PollyController {
 
         @Override
         public List<? extends Portal> getPortals(Sector sector, PortalType type) {
-            return this.decorate(super.getPortals(sector, type));
+            return decorate(super.getPortals(sector, type));
         }
 
 
 
         @Override
         public List<? extends Portal> getPortals(Quadrant quadrant, PortalType type) {
-            return this.decorate(super.getPortals(quadrant, type));
+            return decorate(super.getPortals(quadrant, type));
         }
 
 
 
         @Override
         public List<? extends Portal> getPortals(Sector sector) {
-            return this.decorate(super.getPortals(sector));
+            return decorate(super.getPortals(sector));
         }
     }
 
@@ -300,14 +300,14 @@ public class OrionController extends PollyController {
 
         @Override
         public List<Wormhole> getWormholes(Quadrant quadrant, QuadrantProvider quads) {
-            return this.decorate(super.getWormholes(quadrant, quads));
+            return decorate(super.getWormholes(quadrant, quads));
         }
 
 
 
         @Override
         public List<Wormhole> getWormholes(Sector sector, QuadrantProvider quads) {
-            return this.decorate(super.getWormholes(sector, quads));
+            return decorate(super.getWormholes(sector, quads));
         }
     }
 
@@ -340,7 +340,7 @@ public class OrionController extends PollyController {
 
         @Override
         public List<Quadrant> getAllQuadrants() {
-            return this.decorate(super.getAllQuadrants());
+            return decorate(super.getAllQuadrants());
         }
 
 
@@ -359,16 +359,16 @@ public class OrionController extends PollyController {
         }
     }
 
-    
-    
-    
+
+
+
     private class RouteContext {
         private final String routeId;
         private final Sector start;
         private final Sector target;
         private final RouteOptions options;
         private final List<UniversePath> paths;
-        
+
         public RouteContext(String routeId, Sector start, Sector target, RouteOptions options,
                 List<UniversePath> paths) {
             super();
@@ -378,15 +378,15 @@ public class OrionController extends PollyController {
             this.options = options;
             this.paths = paths;
         }
-        
-        
-        
+
+
+
         public FastByteArrayOutputStream getQuadImage(int n, final int groupId) {
             final UniversePath p = this.paths.get(n - 1);
             final Group g = p.getGroups().stream()
                     .filter(grp -> grp.getId() == groupId)
-                    .findFirst().get();                    
-            
+                    .findFirst().get();
+
             final BufferedImage quadImg = QuadrantUtils.createQuadImage(g.getQuadrant());
             final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
             try {
@@ -397,7 +397,7 @@ public class OrionController extends PollyController {
             return out;
         }
 
-        
+
 
         public void putInto(Map<String, Object> c, int n) {
             c.put("routeId", this.routeId); //$NON-NLS-1$
@@ -409,15 +409,15 @@ public class OrionController extends PollyController {
             c.put("routeCount", this.paths.size()); //$NON-NLS-1$
         }
     }
-    
-    
+
+
 
     private final static long ROUTE_CACHE_TIME = Milliseconds.fromMinutes(5);
     private final static Random RANDOM = new Random();
-    
-    private final static TemporaryValueMap<String, RouteContext> ROUTES = 
+
+    private final static TemporaryValueMap<String, RouteContext> ROUTES =
             new TemporaryValueMap<>(ROUTE_CACHE_TIME);
-    
+
 
     private final QuadrantProvider quadProvider;
     private final WormholeProvider holeProvider;
@@ -439,7 +439,7 @@ public class OrionController extends PollyController {
 
     /**
      * Copy Constructor for {@link #createInstance()}
-     * 
+     *
      * @param myPolly
      * @param quadProvider
      * @param holeProvider
@@ -462,7 +462,7 @@ public class OrionController extends PollyController {
 
     @Override
     protected Controller createInstance() {
-        return new OrionController(this.getMyPolly(), this.quadProvider,
+        return new OrionController(getMyPolly(), this.quadProvider,
                 this.holeProvider, this.portalProvider, this.pathPlanner, this.azManager);
     }
 
@@ -482,7 +482,7 @@ public class OrionController extends PollyController {
     @Deprecated
     public HttpAnswer submitCode(@Param("code") String code, @Param("user") String user,
             @Param("pw") String pw) throws AlternativeAnswerException {
-        this.checkLogin(user, pw);
+        checkLogin(user, pw);
         /*if (Orion.INSTANCE.getLoginCodeManager().updateCurrentCode(code)) {
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
         }*/
@@ -490,6 +490,22 @@ public class OrionController extends PollyController {
     }
 
 
+    @Get(API_HEAT_MAP)
+    public HttpAnswer getHeatmap(@Param("venad") String venad,
+            @Param("quadrant") String quadrant) {
+
+        final FleetHeatMap heatMap = Orion.INSTANCE.getHeatMap();
+        final Quadrant quad = this.quadProvider.getQuadrant(quadrant);
+        final BufferedImage map = QuadrantUtils.drawHeatMap(quad, venad, heatMap);
+        final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
+        try {
+            ImageIO.write(map, "png", out); //$NON-NLS-1$
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        final InputStream in = new FastByteArrayInputStream(out);
+        return new HttpInputStreamAnswer(200, in);
+    }
 
     @Get(API_REQUEST_CODE)
     public HttpAnswer requestCode(@Param("user") String user, @Param("pw") String pw)
@@ -505,9 +521,9 @@ public class OrionController extends PollyController {
     @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, MSG.FAMILY, REVORIX_CATEGORY_KEY,
             ORION_DESC_KEY, VIEW_ORION_PREMISSION })
     public HttpAnswer orion() throws AlternativeAnswerException {
-        this.requirePermissions(VIEW_ORION_PREMISSION);
+        requirePermissions(VIEW_ORION_PREMISSION);
 
-        final Map<String, Object> c = this.createContext(CONTENT_ORION);
+        final Map<String, Object> c = createContext(CONTENT_ORION);
 
         final Collection<Quadrant> allQuads = new TreeSet<>(new Comparator<Quadrant>() {
 
@@ -518,22 +534,22 @@ public class OrionController extends PollyController {
         });
         allQuads.addAll(this.quadProvider.getAllQuadrants());
         c.put("allQuads", allQuads); //$NON-NLS-1$
-        c.put("routeStart", this.getSession().get(ROUTE_FROM_KEY)); //$NON-NLS-1$
-        c.put("routeTarget", this.getSession().get(ROUTE_TO_KEY)); //$NON-NLS-1$
-        c.put("personalPortals", Orion.INSTANCE.getPersonalPortals(this.getSessionUser())); //$NON-NLS-1$
+        c.put("routeStart", getSession().get(ROUTE_FROM_KEY)); //$NON-NLS-1$
+        c.put("routeTarget", getSession().get(ROUTE_TO_KEY)); //$NON-NLS-1$
+        c.put("personalPortals", Orion.INSTANCE.getPersonalPortals(getSessionUser())); //$NON-NLS-1$
         c.put("entryPortals", this.quadProvider.getEntryPortals()); //$NON-NLS-1$
-        c.put("entries", this.azManager.getEntries(this.getSessionUser().getId())); //$NON-NLS-1$
+        c.put("entries", this.azManager.getEntries(getSessionUser().getId())); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
-    
-    
-    
+
+
+
     @Get(value = PAGE_PORTALS, name = PORTALS_NAME_KEY)
     @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, MSG.FAMILY, REVORIX_CATEGORY_KEY,
             PORTALS_DESC_KEY, VIEW_ORION_PREMISSION })
     public HttpAnswer portals() throws AlternativeAnswerException {
-        this.requirePermissions(VIEW_ORION_PREMISSION);
-        return this.makeAnswer(this.createContext(CONTENT_PORTALS));
+        requirePermissions(VIEW_ORION_PREMISSION);
+        return this.makeAnswer(createContext(CONTENT_PORTALS));
     }
 
 
@@ -542,8 +558,8 @@ public class OrionController extends PollyController {
     //@OnRegister({ WebinterfaceManager.ADD_SUB_ENTRY, "Orion", MSG.FAMILY, ORION_DESC_KEY,
     //        VIEW_ORION_PREMISSION })
     public HttpAnswer quadLayout() throws AlternativeAnswerException {
-        this.requirePermissions(OrionController.WRITE_ORION_PREMISSION);
-        return this.makeAnswer(this.createContext(CONTENT_QUAD_LAYOUT));
+        requirePermissions(OrionController.WRITE_ORION_PREMISSION);
+        return this.makeAnswer(createContext(CONTENT_QUAD_LAYOUT));
     }
 
 
@@ -552,19 +568,19 @@ public class OrionController extends PollyController {
     @OnRegister({ WebinterfaceManager.ADD_SUB_ENTRY, "Orion", MSG.FAMILY,
             ALIEN_MANAGEMENT_DESC_KEY, MANAGE_RACE_PERMISSION })
     public HttpAnswer alienManagement() throws AlternativeAnswerException {
-        this.requirePermissions(OrionController.MANAGE_RACE_PERMISSION);
-        final Map<String, Object> c = this.createContext(CONTENT_ALIEN_MANAGER);
+        requirePermissions(OrionController.MANAGE_RACE_PERMISSION);
+        final Map<String, Object> c = createContext(CONTENT_ALIEN_MANAGER);
         c.put("allRaces", Orion.INSTANCE.getAlienManager().getAllRaces()); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
 
 
-    
+
     @Get(API_REMOVE_RACE)
     public HttpAnswer removeRace(@Param("id") int id) throws AlternativeAnswerException {
-        this.requirePermissions(OrionController.MANAGE_RACE_PERMISSION);
+        requirePermissions(OrionController.MANAGE_RACE_PERMISSION);
         final AlienRace ar = Orion.INSTANCE.getAlienManager().getRaceById(id);
-        
+
         try {
             Orion.INSTANCE.getAlienManager().removeRace(ar);
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
@@ -573,24 +589,24 @@ public class OrionController extends PollyController {
         }
     }
 
-    
-    
+
+
     public final static class AddRaceResult extends SuccessResult {
         public final int id;
-        
+
         private AddRaceResult(int id) {
             super(true, ""); //$NON-NLS-1$
             this.id = id;
         }
     }
-    
-    
+
+
     @Get(API_ADD_RACE)
-    public HttpAnswer addRace(@Param("name") String name, 
-            @Param(value = "type", optional = true) String type, 
+    public HttpAnswer addRace(@Param("name") String name,
+            @Param(value = "type", optional = true) String type,
             @Param("aggr") boolean aggressive) throws AlternativeAnswerException {
-        this.requirePermissions(MANAGE_RACE_PERMISSION);
-        
+        requirePermissions(MANAGE_RACE_PERMISSION);
+
         try {
             final DBAlienRace race = (DBAlienRace) Orion.INSTANCE.getAlienManager().addRace(
                     name, type, aggressive);
@@ -599,29 +615,29 @@ public class OrionController extends PollyController {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
     }
-    
-    
-    
+
+
+
     @Get(API_ADD_SPAWN)
-    public HttpAnswer addSpawn(@Param("name") String name, @Param("raceId") int raceId, 
+    public HttpAnswer addSpawn(@Param("name") String name, @Param("raceId") int raceId,
             @Param("sector") String sectorString) {
-        
+
         try {
             final Sector s = QuadrantUtils.parse(sectorString);
             final AlienRace race = Orion.INSTANCE.getAlienManager().getRaceById(raceId);
-            
+
             Orion.INSTANCE.getAlienManager().addSpawn(name, race, s);
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
         } catch (Exception e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
     }
-    
-    
-    
+
+
+
     @Get(API_REMOVE_SPAWN)
     public HttpAnswer removeSpawn(@Param("id") int spawnId) throws AlternativeAnswerException {
-        this.requirePermissions(MANAGE_RACE_PERMISSION);
+        requirePermissions(MANAGE_RACE_PERMISSION);
         try {
             final AlienSpawn spawn = Orion.INSTANCE.getAlienManager().getSpawnById(spawnId);
             Orion.INSTANCE.getAlienManager().removeAlienSpawn(spawn);
@@ -632,7 +648,7 @@ public class OrionController extends PollyController {
     }
 
 
-    
+
     @Post(API_POST_LAYOUT)
     public HttpAnswer postQuadLayout(@Param("quadName") String quadName,
             @Param("paste") String paste) throws HttpException {
@@ -660,16 +676,16 @@ public class OrionController extends PollyController {
             final Collection<? extends Portal> cportals = this.portalProvider.getPortals(
                     q, PortalType.CLAN);
 
-            // TODO: this should use an alien manager which returns DisplaySectors within 
+            // TODO: this should use an alien manager which returns DisplaySectors within
             //       the alien spawns
-            final Collection<? extends AlienSpawn> spawns = 
+            final Collection<? extends AlienSpawn> spawns =
                     Orion.INSTANCE.getAlienManager().getSpawnsByQuadrant(q.getName());
-            
+
             if (abstractView) {
-                q = this.createAbstract(q, holes, spawns);
+                q = createAbstract(q, holes, spawns);
             }
-            
-            
+
+
             final Resources hourlyProduction = QuadrantUtils.calculateHourlyProduction(q);
             final DecimalFormat nf = (DecimalFormat) DecimalFormat
                     .getInstance(Locale.ENGLISH);
@@ -686,10 +702,10 @@ public class OrionController extends PollyController {
         c.put("abstract", abstractView); //$NON-NLS-1$
         c.put("quad", q); //$NON-NLS-1$
     }
-    
-    
-    
-    private Quadrant createAbstract(Quadrant quad, Collection<? extends Wormhole> holes, 
+
+
+
+    private Quadrant createAbstract(Quadrant quad, Collection<? extends Wormhole> holes,
             Collection<? extends AlienSpawn> spawns) {
         final HighlightedQuadrant q = new HighlightedQuadrant(quad, true);
         holes.forEach(h -> q.highlight(h.getSource(), SectorType.HIGHLIGHT_WH_START));
@@ -700,16 +716,16 @@ public class OrionController extends PollyController {
 
 
     @Get(API_GET_QUADRANT)
-    public HttpAnswer quadrant(@Param("quadName") String name, 
+    public HttpAnswer quadrant(@Param("quadName") String name,
             @Param(value = "abstract", defaultValue = "false", optional = true) boolean renderAbstract) {
 
-        if (!this.getMyPolly().roles()
-                .hasPermission(this.getSessionUser(), VIEW_ORION_PREMISSION)) {
+        if (!getMyPolly().roles()
+                .hasPermission(getSessionUser(), VIEW_ORION_PREMISSION)) {
             return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
         }
 
-        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        this.fillQuadrantContext(name, c, true, renderAbstract);
+        final Map<String, Object> c = createContext(""); //$NON-NLS-1$
+        fillQuadrantContext(name, c, true, renderAbstract);
         return HttpAnswers.newTemplateAnswer(CONTENT_QUADRANT, c);
     }
 
@@ -719,13 +735,13 @@ public class OrionController extends PollyController {
     public HttpAnswer quadrant(@Param("quadName") String name, @Param("hlX") int hlX,
             @Param("hlY") int hlY) {
 
-        if (!this.getMyPolly().roles()
-                .hasPermission(this.getSessionUser(), VIEW_ORION_PREMISSION)) {
+        if (!getMyPolly().roles()
+                .hasPermission(getSessionUser(), VIEW_ORION_PREMISSION)) {
             return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
         }
 
-        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        this.fillQuadrantContext(name, c, true, false);
+        final Map<String, Object> c = createContext(""); //$NON-NLS-1$
+        fillQuadrantContext(name, c, true, false);
         c.put("hlX", hlX); //$NON-NLS-1$
         c.put("hlY", hlY); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_QUADRANT, c);
@@ -737,15 +753,15 @@ public class OrionController extends PollyController {
     public HttpAnswer sectorInfo(@Param("quadrant") String quadrant, @Param("x") int x,
             @Param("y") int y) {
 
-        if (!this.getMyPolly().roles()
-                .hasPermission(this.getSessionUser(), VIEW_ORION_PREMISSION)) {
+        if (!getMyPolly().roles()
+                .hasPermission(getSessionUser(), VIEW_ORION_PREMISSION)) {
             return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
         }
 
         final NumberFormat nf = new DecimalFormat("0.00"); //$NON-NLS-1$
         final Quadrant q = this.quadProvider.getQuadrant(quadrant);
         final Sector sector = q.getSector(x, y);
-        final Map<String, Object> c = this.createContext(CONTENT_SECTOR_INFO);
+        final Map<String, Object> c = createContext(CONTENT_SECTOR_INFO);
         c.put("sector", sector); //$NON-NLS-1$
         c.put("nf", nf); //$NON-NLS-1$
         if (sector != null) {
@@ -783,17 +799,17 @@ public class OrionController extends PollyController {
 
 
     private HttpAnswer updateRouteInformation(String quadrant, int x, int y, String key) {
-        if (!this.getMyPolly().roles()
-                .hasPermission(this.getSessionUser(), ROUTE_ORION_PREMISSION)) {
+        if (!getMyPolly().roles()
+                .hasPermission(getSessionUser(), ROUTE_ORION_PREMISSION)) {
             return new GsonHttpAnswer(403, new SuccessResult(false, MSG.httpNoPermission));
         }
         final Quadrant q = this.quadProvider.getQuadrant(quadrant);
         final Sector sector = q.getSector(x, y);
         if (sector != null) {
-            this.getSession().set(key, sector);
+            getSession().set(key, sector);
             return new GsonHttpAnswer(200, new SectorResult(sector));
         }
-        this.getSession().set(key, sector);
+        getSession().set(key, sector);
         return new GsonHttpAnswer(200, new SuccessResult(false, "")); //$NON-NLS-1$
     }
 
@@ -803,7 +819,7 @@ public class OrionController extends PollyController {
     public HttpAnswer setRouteFrom(@Param("quadrant") String quadrant, @Param("x") int x,
             @Param("y") int y) {
 
-        return this.updateRouteInformation(quadrant, x, y, ROUTE_FROM_KEY);
+        return updateRouteInformation(quadrant, x, y, ROUTE_FROM_KEY);
     }
 
 
@@ -812,7 +828,7 @@ public class OrionController extends PollyController {
     public HttpAnswer setRouteTo(@Param("quadrant") String quadrant, @Param("x") int x,
             @Param("y") int y) {
 
-        return this.updateRouteInformation(quadrant, x, y, ROUTE_TO_KEY);
+        return updateRouteInformation(quadrant, x, y, ROUTE_TO_KEY);
     }
 
 
@@ -823,8 +839,8 @@ public class OrionController extends PollyController {
         if (rc == null) {
             return HttpAnswers.newStringAnswer(MSG.htmlOrionRouteTimeOut);
         }
-        
-        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+
+        final Map<String, Object> c = createContext(""); //$NON-NLS-1$
         rc.putInto(c, 1);
         c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_SHARE_ROUTE, c);
@@ -838,8 +854,8 @@ public class OrionController extends PollyController {
         if (rc == null) {
             return HttpAnswers.newStringAnswer(MSG.htmlOrionRouteTimeOut);
         }
-        
-        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+
+        final Map<String, Object> c = createContext(""); //$NON-NLS-1$
         rc.putInto(c, n);
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE_SINGLE, c);
     }
@@ -855,22 +871,21 @@ public class OrionController extends PollyController {
             @Param(value = "be", optional = true, defaultValue = "false") boolean blockEntryPortals,
             @Param(value = "re", optional = true, defaultValue = "true") boolean renderDark) {
 
-        if (!this.getMyPolly().roles()
-                .hasPermission(this.getSessionUser(), ROUTE_ORION_PREMISSION)) {
+        if (!getMyPolly().roles()
+                .hasPermission(getSessionUser(), ROUTE_ORION_PREMISSION)) {
             return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
         }
 
-        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        final HttpSession s = this.getSession();
+        final Map<String, Object> c = createContext(""); //$NON-NLS-1$
+        final HttpSession s = getSession();
 
-        final List<Sector> personalPortals = Orion.INSTANCE.getPersonalPortals(this
-                .getSessionUser());
+        final List<Sector> personalPortals = Orion.INSTANCE.getPersonalPortals(getSessionUser());
 
         if (!s.isSet(ROUTE_FROM_KEY)) {
             if (!personalPortals.isEmpty()) {
                 s.set(ROUTE_FROM_KEY, personalPortals.iterator().next());
             } else {
-                return HttpAnswers.newStringAnswer(""); //$NON-NLS-1$    
+                return HttpAnswers.newStringAnswer(""); //$NON-NLS-1$
             }
         }
         if (!s.isSet(ROUTE_TO_KEY)) {
@@ -881,11 +896,11 @@ public class OrionController extends PollyController {
 
         final TimespanType jumpTime;
         if (fleetId == -1) {
-            jumpTime = this.parse(jt, new TimespanType(0));
+            jumpTime = parse(jt, new TimespanType(0));
         } else {
-            jumpTime = this.azManager.getJumpTime(fleetId, this.getSessionUser());
+            jumpTime = this.azManager.getJumpTime(fleetId, getSessionUser());
         }
-        final TimespanType currentJumpTime = this.parse(cjt, jumpTime);
+        final TimespanType currentJumpTime = parse(cjt, jumpTime);
         final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime,
                 personalPortals, blockTail, blockEntryPortals, renderDark);
         final List<UniversePath> path = this.pathPlanner.findShortestPaths(start,
@@ -894,18 +909,18 @@ public class OrionController extends PollyController {
         s.set(ROUTE_OPTIONS_KEY, options);
         s.set(ROUTE_COUNT_KEY, path.size());
 
-        final String routeId = createRouteId(); 
-        final RouteContext rc = new RouteContext(routeId, start, target, options, 
+        final String routeId = createRouteId();
+        final RouteContext rc = new RouteContext(routeId, start, target, options,
                 path);
-        
+
         rc.putInto(c, 1);
         c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         ROUTES.put(routeId, rc);
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);
     }
 
-    
-    
+
+
     private static String createRouteId() {
         synchronized (ROUTES) {
             String s = ""; //$NON-NLS-1$
@@ -916,17 +931,17 @@ public class OrionController extends PollyController {
             return s;
         }
     }
-    
+
 
 
     @Get(API_GET_GROUP_IMAGE)
-    public HttpAnswer getImageForGroup(@Param("routeId") String routeId, 
+    public HttpAnswer getImageForGroup(@Param("routeId") String routeId,
             @Param("n") int n, @Param("grp") int id) {
         final RouteContext rc = ROUTES.get(routeId);
         if (rc == null) {
             return HttpAnswers.newStringAnswer(404, ""); //$NON-NLS-1$
         }
-        
+
         final FastByteArrayOutputStream out = rc.getQuadImage(n, id);
         final InputStream in = new FastByteArrayInputStream(out);
         return new HttpInputStreamAnswer(200, in);
@@ -935,7 +950,7 @@ public class OrionController extends PollyController {
 
 
     private TimespanType parse(String jumpTime, TimespanType alternative) {
-        final Types types = this.getMyPolly().parse(jumpTime);
+        final Types types = getMyPolly().parse(jumpTime);
         if (types == null || !(types instanceof TimespanType)) {
             return alternative;
         }
@@ -972,53 +987,48 @@ public class OrionController extends PollyController {
 
     @Post(API_JSON_POST_SECTOR)
     public HttpAnswer postJson() {
-        final String json = this.getEvent().getRequestBody();
+        final String json = getEvent().getRequestBody();
         final FromClientSector sector = OrionJsonAdapter.readSectorFromClient(json);
         final String reporter = sector.getSelf();
 
-        final PersistenceManagerV2 persistence = this.getMyPolly().persistence();
-        persistence.writeAtomicParallel(new Atomic() {
+        // final PersistenceManagerV2 persistence = getMyPolly().persistence();
 
-            @Override
-            public void perform(Write write) throws DatabaseException {
-                try {
-                    Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
-                            Collections.singleton(sector));
-                    Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector,
-                            sector.getClanPortals());
-                    Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector,
-                            sector.getPersonalPortals());
-                    Orion.INSTANCE.getFleetTracker().updateOrionFleets(reporter,
-                            sector.getOwnFleets());
-                    Orion.INSTANCE.getFleetTracker().updateFleets(reporter,
-                            sector.getFleets());
-                } catch (OrionException e) {
-                    throw new DatabaseException(e);
-                }
-            }
-        });
+        try {
+            Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
+                    Collections.singleton(sector));
+            Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector,
+                    sector.getClanPortals());
+            Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector,
+                    sector.getPersonalPortals());
+            Orion.INSTANCE.getFleetTracker().updateOrionFleets(reporter,
+                    sector.getOwnFleets());
+            Orion.INSTANCE.getFleetTracker().updateFleets(reporter,
+                    sector.getFleets());
+        } catch (OrionException e) {
+            e.printStackTrace();
+        }
 
         return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
     }
-    
-    
-    
-    
+
+
+
+
     public final class ResourcePrices {
         public String date;
         public String[] prices;
-        
+
         private ResourcePrices(String date, String[] prices) {
             this.date = date;
             this.prices = prices;
         }
     }
-    
-    
-    
+
+
+
     @Get(API_GET_PRICES)
     public HttpAnswer getPrices(@Param("user") String user, @Param("pw") String pw) throws AlternativeAnswerException {
-        this.checkLogin(user, pw);
+        checkLogin(user, pw);
         final NumberFormat nf = new DecimalFormat("0.00"); //$NON-NLS-1$
         final ResourcePriceProvider rpp = Orion.INSTANCE.getPriceProvider();
         final List<String> priceList = rpp.getAllPrices().stream()
@@ -1026,7 +1036,7 @@ public class OrionController extends PollyController {
                 .map(nf::format)
                 .collect(Collectors.toList());
         final String[] priceArray = priceList.toArray(new String[priceList.size()]);
-        final String date = this.getMyPolly().formatting().formatDate(rpp.getRefreshTime());
+        final String date = getMyPolly().formatting().formatDate(rpp.getRefreshTime());
         return new GsonHttpAnswer(200, new ResourcePrices(date, priceArray));
     }
 }
