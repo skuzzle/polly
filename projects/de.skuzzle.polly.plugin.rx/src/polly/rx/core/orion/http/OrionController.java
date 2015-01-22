@@ -492,7 +492,10 @@ public class OrionController extends PollyController {
 
     @Get(API_HEAT_MAP)
     public HttpAnswer getHeatmap(@Param("venad") String venad,
-            @Param("quadrant") String quadrant) {
+            @Param("quadrant") String quadrant, @Param("user") String user,
+            @Param("pw") String pw) throws AlternativeAnswerException {
+
+        checkLogin(user, pw);
 
         final FleetHeatMap heatMap = Orion.INSTANCE.getHeatMap();
         final Quadrant quad = this.quadProvider.getQuadrant(quadrant);
