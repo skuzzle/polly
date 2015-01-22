@@ -78,6 +78,7 @@ import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.resources.Constants;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.tools.collections.TemporaryValueMap;
+import de.skuzzle.polly.tools.concurrent.Parallel;
 import de.skuzzle.polly.tools.io.FastByteArrayInputStream;
 import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
@@ -994,22 +995,25 @@ public class OrionController extends PollyController {
         final FromClientSector sector = OrionJsonAdapter.readSectorFromClient(json);
         final String reporter = sector.getSelf();
 
-        // final PersistenceManagerV2 persistence = getMyPolly().persistence();
-
-        try {
-            Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
-                    Collections.singleton(sector));
-            Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector,
-                    sector.getClanPortals());
-            Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector,
-                    sector.getPersonalPortals());
-            Orion.INSTANCE.getFleetTracker().updateOrionFleets(reporter,
-                    sector.getOwnFleets());
-            Orion.INSTANCE.getFleetTracker().updateFleets(reporter,
-                    sector.getFleets());
-        } catch (OrionException e) {
-            e.printStackTrace();
-        }
+        Parallel.run(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
+                            Collections.singleton(sector));
+                    Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector,
+                            sector.getClanPortals());
+                    Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector,
+                            sector.getPersonalPortals());
+                    Orion.INSTANCE.getFleetTracker().updateOrionFleets(reporter,
+                            sector.getOwnFleets());
+                    Orion.INSTANCE.getFleetTracker().updateFleets(reporter,
+                            sector.getFleets());
+                } catch (OrionException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
     }
