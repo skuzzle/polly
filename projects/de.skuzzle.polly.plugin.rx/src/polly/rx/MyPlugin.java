@@ -46,6 +46,7 @@ import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
+import polly.rx.entities.DBHeatMapEntry;
 import polly.rx.entities.DBPortal;
 import polly.rx.entities.DBProduction;
 import polly.rx.entities.DBQuadrant;
@@ -162,6 +163,7 @@ public class MyPlugin extends PollyPlugin {
         myPolly.persistence().registerEntity(FleetScanShip.class);
         myPolly.persistence().registerEntity(ScoreBoardEntry.class);
         myPolly.persistence().registerEntity(AZEntry.class);
+        myPolly.persistence().registerEntity(DBHeatMapEntry.class);
 
         // orion
         myPolly.persistence().registerEntity(DBProduction.class);
