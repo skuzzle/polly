@@ -71,10 +71,6 @@ public class MemoryFleetTracker implements FleetTracker {
             if (prev == null || !prev.getSector().equals(f.getSector())) {
                 // This fleet has been moved!
                 this.heatMap.update(f);
-                System.out.printf("%s auf %s: %d%n",
-                        f.getOwnerName(),
-                        f.getSector(),
-                        this.heatMap.getTimes(f.getOwnerName(), f.getSector()));
             }
         }
         this.events.dispatch(FleetListener.class,
