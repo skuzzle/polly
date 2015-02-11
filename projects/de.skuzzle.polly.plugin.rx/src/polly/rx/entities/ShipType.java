@@ -16,8 +16,9 @@ public enum ShipType {
     KOMMANDO("Kommandoschiff"), //$NON-NLS-1$
     VERSORGER("Versorgungsschiff"), //$NON-NLS-1$
     TRANSPORTER("Transportschiff"), //$NON-NLS-1$
-    UNKNOWN("Unbekannt"); //$NON-NLS-1$
-    
+    UNKNOWN("Unbekannt"), //$NON-NLS-1$
+    GEFECHTSSTATION("Gefechtsstation"); //$NON-NLS-1$
+
     public static ShipType byPrefix(String shipName) {
         try {
             shipName = URLDecoder.decode(shipName, "ISO-8859-1"); //$NON-NLS-1$
@@ -40,11 +41,11 @@ public enum ShipType {
         return UNKNOWN;
     }
     private final String name;
-    
+
     private ShipType(String name) {
         this.name = name;
     }
-    
+
     @Override
     public String toString() {
         return this.name;
