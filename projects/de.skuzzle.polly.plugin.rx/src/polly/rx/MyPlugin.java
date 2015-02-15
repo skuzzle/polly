@@ -412,6 +412,7 @@ public class MyPlugin extends PollyPlugin {
 
         try {
             this.fleetDBManager.cleanInvalidBattleReports();
+            this.fleetDBManager.cleanInvalidFleetScans();
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
