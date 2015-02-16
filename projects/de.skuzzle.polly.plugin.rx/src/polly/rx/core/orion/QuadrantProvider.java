@@ -7,14 +7,16 @@ import polly.rx.core.orion.model.Sector;
 
 
 public interface QuadrantProvider extends QuadrantListener {
-    
+
     public List<String> getAllQuadrantNames();
-    
+
     public List<? extends Sector> getEntryPortals();
-    
+
     public Quadrant getQuadrant(Sector sector);
-    
+
     public Quadrant getQuadrant(String name);
-    
+
     public List<? extends Quadrant> getAllQuadrants();
+
+    List<Sector> getAllSectors();
 }

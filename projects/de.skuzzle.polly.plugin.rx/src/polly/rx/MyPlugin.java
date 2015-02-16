@@ -42,6 +42,7 @@ import polly.rx.core.orion.http.OrionNewsProvider;
 import polly.rx.core.orion.model.AlienRace;
 import polly.rx.core.orion.model.AlienSpawn;
 import polly.rx.core.orion.model.Portal;
+import polly.rx.core.orion.model.Sector;
 import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
@@ -68,6 +69,7 @@ import polly.rx.httpv2.PortalModel;
 import polly.rx.httpv2.RXController;
 import polly.rx.httpv2.ScoreboardDetailModel;
 import polly.rx.httpv2.ScoreboardTableModel;
+import polly.rx.httpv2.SectorTableModel;
 import polly.rx.httpv2.ShipsForScanTableModel;
 import polly.rx.httpv2.StatisticsGatherer;
 import polly.rx.httpv2.TrainingTableModel;
@@ -303,6 +305,7 @@ public class MyPlugin extends PollyPlugin {
         roleManager.assignPermission(ORION_ROLE, OrionController.WRITE_ORION_PREMISSION);
         roleManager.assignPermission(ORION_ROLE, OrionController.ROUTE_ORION_PREMISSION);
         roleManager.assignPermission(ORION_ROLE, OrionController.MANAGE_RACE_PERMISSION);
+        roleManager.assignPermission(ORION_ROLE, OrionController.SEARCH_SECTORS_PERMISSION);
 
         super.assignPermissions(roleManager);
     }
@@ -350,6 +353,10 @@ public class MyPlugin extends PollyPlugin {
                 loginCodeManager,
                 heatMap
             );
+
+        final HTMLTableModel<Sector> sectorModel = new SectorTableModel(dboa.getQuadrantProvider());
+        final HTMLTable<Sector> sectorTable = new HTMLTable<>("sectors", sectorModel, getMyPolly()); //$NON-NLS-1$
+        getMyPolly().webInterface().getServer().addHttpEventHandler("/api/sectors", sectorTable); //$NON-NLS-1$
 
         final OrionChatController chatController = new OrionChatController(
                 getMyPolly(), this.chatProvider);

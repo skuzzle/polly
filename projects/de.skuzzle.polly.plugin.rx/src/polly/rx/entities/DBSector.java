@@ -34,7 +34,7 @@ import de.skuzzle.polly.tools.Equatable;
         @NamedQuery(name = DBSector.QUERY_BY_QUADRANT, query = "SELECT qs FROM DBSector qs WHERE qs.quadName = ?1"),
         @NamedQuery(name = DBSector.QUERY_DISTINCT_QUADS, query = "SELECT DISTINCT(qs.quadName) FROM DBSector qs"),
         @NamedQuery(name = DBSector.QUERY_SECTOR_BY_TYPE, query = "SELECT s FROM DBSector s WHERE s.type = ?1"),
-        @NamedQuery(name = DBSector.QUERY_ALL_SECTORS, query = "SELECT qs.quadName FROM DBSector qs") })
+        @NamedQuery(name = DBSector.QUERY_ALL_SECTORS, query = "SELECT s FROM DBSector s") })
 public class DBSector implements Sector {
 
     public final static String QUERY_ALL_SECTORS = "ALL_SECTORS"; //$NON-NLS-1$
@@ -71,14 +71,14 @@ public class DBSector implements Sector {
     @OneToMany(cascade = CascadeType.REMOVE)
     private Collection<DBProduction> ressources;
 
-    
+
 
     public DBSector() {}
 
 
 
     public DBSector(Sector src) {
-        Check.objects(src, src.getType(), src.getRessources(), src.getQuadName(), 
+        Check.objects(src, src.getType(), src.getRessources(), src.getQuadName(),
                 src.getDate()).notNull();
         this.quadName = src.getQuadName().trim();
         this.x = src.getX();
@@ -97,10 +97,10 @@ public class DBSector implements Sector {
 
 
     public void updateFrom(Sector other, Write write) {
-        Check.objects(other, other.getType(), other.getRessources(), 
+        Check.objects(other, other.getType(), other.getRessources(),
                 other.getQuadName(), other.getDate()).notNull().
             andObjects(this).equal(other);
-        
+
          if (other.getType() == SectorType.UNKNOWN) {
             // do not update with unknown information
             return;
@@ -110,7 +110,7 @@ public class DBSector implements Sector {
         this.sectorGuardBonus = other.getSectorGuardBonus();
         this.date = Time.currentTime();
         this.type = other.getType();
-        
+
         if (!this.ressources.equals(other.getRessources())) {
             write.removeAll(this.ressources);
             this.ressources.clear();
@@ -189,6 +189,7 @@ public class DBSector implements Sector {
 
 
 
+    @Override
     public Collection<DBProduction> getRessources() {
         return this.ressources;
     }
@@ -284,9 +285,9 @@ public class DBSector implements Sector {
     public String toString() {
         return OrionObjectUtil.sectorString(this);
     }
-    
-    
-    
+
+
+
     @Override
     public int compareTo(Sector o) {
         return SECTOR_COMPERATOR.compare(this, o);

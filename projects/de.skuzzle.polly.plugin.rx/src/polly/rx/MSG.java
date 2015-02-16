@@ -24,13 +24,13 @@ public class MSG extends Constants {
     public static String addTrainSuccess;
     public static String addTrainFail;
     public static String addTrainRemind;
-    
+
     // IGMCommand
     public static String igmHelp;
     public static String igmSig0Desc;
     public static String igmSig0ParamMsg;
     public static String igmViaIrcPostfix;
-    
+
     // AnonymizationCommand
     public static String anonymizationHelp;
     public static String anonymizationSig0Desc;
@@ -106,7 +106,7 @@ public class MSG extends Constants {
     public static String routeParseError;
     public static String routeInfo;
     public static String routeNoRouteFound;
-    
+
     // VenadCommand
     public static String venadHelp;
     public static String venadSig0Desc;
@@ -162,7 +162,7 @@ public class MSG extends Constants {
     public static String tacticDauerbeschuss;
     public static String tacticAlien;
     public static String tacticSekWache;
-    
+
     // FleetScanShip
     public static String scanShipSpotFirstTime;
     public static String scanShipSpotted;
@@ -332,7 +332,7 @@ public class MSG extends Constants {
     public static String htmlGMOrionDesc;
     public static String htmlGMOrionV2Name;
     public static String htmlGMOrionV2Desc;
-    
+
     public static String htmlGraphSelectMonths;
     public static String htmlGraphLinkToImage;
 
@@ -501,7 +501,7 @@ public class MSG extends Constants {
     public static String htmlOrionAggressiveAliens;
     public static String htmlOrionRouteTimeOut;
     public static String htmlOrionRenderDark;
-    
+
     public static String htmlAlienRaces;
     public static String htmlAlienRaceColumns;
     public static String htmlAlienRaceRemove;
@@ -515,11 +515,15 @@ public class MSG extends Constants {
     public static String htmlAlienSpawnSector;
     public static String htmlAlienSpawnSectorHint;
     public static String htmlAlienRace;
-    
+
+    public static String htmlSectorsColumns;
+    public static String htmlSectorsTitle;
+    public static String htmlSectorsDesc;
+
     public static String htmlPortalColumns;
     public static String htmlPortals;
     public static String htmlPortalsDesc;
-    
+
     // MyPlugin
     public static String pluginRepairTimeWarning;
     public static String pluginVenadDesc;

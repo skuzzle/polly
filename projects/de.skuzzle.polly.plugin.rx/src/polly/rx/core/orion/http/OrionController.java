@@ -89,11 +89,13 @@ public class OrionController extends PollyController {
     public final static String ROUTE_ORION_PREMISSION = "polly.permission.ROUTE_ORION"; //$NON-NLS-1$
 
     public final static String MANAGE_RACE_PERMISSION = "polly.permission.MANAGE_ALIEN_RACES"; //$NON-NLS-1$
+    public final static String SEARCH_SECTORS_PERMISSION = "polly.permission.SEARCH_SECTORS"; //$NON-NLS-1$
 
     public final static String PAGE_ORION = "/pages/orion"; //$NON-NLS-1$
     public final static String PAGE_QUAD_LAYOUT = "/pages/orion/quadlayout"; //$NON-NLS-1$
     public final static String PAGE_ALIEN_MANAGEMENT = "/pages/orion/manageAliens"; //$NON-NLS-1$
     public final static String PAGE_PORTALS = "/pages/orion/portals"; //$NON-NLS-1$
+    public final static String PAGE_SECTORS = "/pages/sectors"; //$NON-NLS-1$
 
     public final static String API_GET_QUADRANT = "/api/orion/quadrant"; //$NON-NLS-1$
     public final static String API_GET_SECTOR_INFO = "/api/orion/sector"; //$NON-NLS-1$
@@ -126,6 +128,7 @@ public class OrionController extends PollyController {
     private final static String CONTENT_ROUTE_SINGLE = "/polly/rx/httpv2/view/orion/route.single.html"; //$NON-NLS-1$
     private final static String CONTENT_SHARE_ROUTE = "/polly/rx/httpv2/view/orion/route.share.html"; //$NON-NLS-1$
     private final static String CONTENT_PORTALS = "/polly/rx/httpv2/view/portals.overview.html"; //$NON-NLS-1$
+    private final static String CONTENT_SECTOR_SEARCH = "/polly/rx/httpv2/view/sectors.overview.html"; //$NON-NLS-1$
 
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
     private final static String ORION_NAME_KEY = "htmlOrionName"; //$NON-NLS-1$
@@ -134,6 +137,8 @@ public class OrionController extends PollyController {
     private final static String ALIEN_MANAGEMENT_DESC_KEY = "htmlOrionAlienManagementDesc"; //$NON-NLS-1$
     private final static String PORTALS_NAME_KEY = "htmlPortals"; //$NON-NLS-1$
     private final static String PORTALS_DESC_KEY = "htmlPortalsDesc"; //$NON-NLS-1$
+    private final static String SECTORS_NAME_KEY = "htmlSectorsTitle"; //$NON-NLS-1$
+    private final static String SECTORS_DESC_KEY = "htmlSectorsDesc"; //$NON-NLS-1$
 
 
     private final static String ROUTE_FROM_KEY = "routeFrom"; //$NON-NLS-1$
@@ -578,7 +583,14 @@ public class OrionController extends PollyController {
         return this.makeAnswer(c);
     }
 
-
+    @Get(value = PAGE_SECTORS, name = SECTORS_NAME_KEY)
+    @OnRegister({ WebinterfaceManager.ADD_SUB_ENTRY, "Orion", MSG.FAMILY,
+            SECTORS_DESC_KEY, SEARCH_SECTORS_PERMISSION })
+    public HttpAnswer sectorSearch() throws AlternativeAnswerException {
+        requirePermissions(OrionController.SEARCH_SECTORS_PERMISSION);
+        final Map<String, Object> c = createContext(CONTENT_SECTOR_SEARCH);
+        return this.makeAnswer(c);
+    }
 
     @Get(API_REMOVE_RACE)
     public HttpAnswer removeRace(@Param("id") int id) throws AlternativeAnswerException {

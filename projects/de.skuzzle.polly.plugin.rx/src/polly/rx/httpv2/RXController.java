@@ -75,7 +75,7 @@ public class RXController extends PollyController {
     public final static String PAGE_SCORE_DETAILS = "/pages/score/details"; //$NON-NLS-1$
     public final static String PAGE_REPORT_DETAILS = "/pages/reportDetails"; //$NON-NLS-1$
     public final static String PAGE_TRAININGS = "/pages/trainings"; //$NON-NLS-1$
-
+    public final static String PAGE_SECTORS = "/pages/sectors"; //$NON-NLS-1$
 
     public final static String API_ADD_TO_COMPARE = "/api/addToCompare"; //$NON-NLS-1$
     public final static String API_REMOVE_FROM_COMPARE = "/api/removeFromCompare"; //$NON-NLS-1$
@@ -113,7 +113,6 @@ public class RXController extends PollyController {
     private final static String CONTENT_SCOREBOARD = "polly/rx/httpv2/view/scoreboard.overview.html"; //$NON-NLS-1$
     private final static String CONTENT_REPORTS = "polly/rx/httpv2/view/battlereports.overview.html"; //$NON-NLS-1$
     private final static String CONTENT_CONFIG_AZ = "polly/rx/httpv2/view/configure.az.html"; //$NON-NLS-1$
-    private final static String CONTENT_GM_SCRIPTS = "polly/rx/httpv2/view/gmscripts.html"; //$NON-NLS-1$
     private final static String CONTENT_COMPARE_SCORES = "polly/rx/httpv2/view/scoreboard.compare.html"; //$NON-NLS-1$
     private final static String CONTENT_SCORE_DETAILS = "polly/rx/httpv2/view/scoreboard.details.html"; //$NON-NLS-1$
     private final static String CONTENT_GRAPH_COMPARE = "polly/rx/httpv2/view/graph.html"; //$NON-NLS-1$
@@ -141,8 +140,6 @@ public class RXController extends PollyController {
     private final static String REPORTS_DESC_KEY = "httpReportsMngrDesc"; //$NON-NLS-1$
     private final static String CONFIG_AZ_NAME_KEY = "httpAzMngr"; //$NON-NLS-1$
     private final static String CONFIG_AZ_DESC_KEY = "httpAzMngrDesc"; //$NON-NLS-1$
-    private final static String GM_SCRIPT_NAME_KEY = "httpGmScripts"; //$NON-NLS-1$
-    private final static String GM_SCRIPT_DESC_KEY = "httpGmScriptsDesc"; //$NON-NLS-1$
     private final static String TRAININGS_NAME_KEY = "htmlTrainingCaption"; //$NON-NLS-1$
     private final static String TRAININGS_DESC_KEY = "htmlTrainingDescription"; //$NON-NLS-1$
 
@@ -182,8 +179,6 @@ public class RXController extends PollyController {
         HTMLTools.gainFieldAccess(c, MSG.class, "MSG"); //$NON-NLS-1$
         return c;
     }
-
-
 
     @Get(value = PAGE_TRAININGS, name = TRAININGS_NAME_KEY)
     @OnRegister({

@@ -9,11 +9,11 @@ import polly.rx.core.orion.model.Sector;
 public class QuadrantProviderDecorator implements QuadrantProvider {
 
     private final QuadrantProvider wrapped;
-    
+
     public QuadrantProviderDecorator(QuadrantProvider wrapped) {
         this.wrapped = wrapped;
     }
-    
+
     @Override
     public List<String> getAllQuadrantNames() {
         return this.wrapped.getAllQuadrantNames();
@@ -32,6 +32,11 @@ public class QuadrantProviderDecorator implements QuadrantProvider {
     @Override
     public List<? extends Quadrant> getAllQuadrants() {
         return this.wrapped.getAllQuadrants();
+    }
+
+    @Override
+    public List<Sector> getAllSectors() {
+        return this.wrapped.getAllSectors();
     }
 
     @Override
@@ -56,6 +61,6 @@ public class QuadrantProviderDecorator implements QuadrantProvider {
 
     @Override
     public void sectorsUpdated(QuadrantEvent e) {
-        this.sectorsUpdated(e);
+        sectorsUpdated(e);
     }
 }
