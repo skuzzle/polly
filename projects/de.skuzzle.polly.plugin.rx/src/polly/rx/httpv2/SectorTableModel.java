@@ -46,6 +46,12 @@ public class SectorTableModel extends AbstractHTMLTableModel<Sector> {
         switch (column) {
         case 0:
             return Date.class;
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+            return Integer.class;
         }
         return super.getColumnClass(column);
     }
