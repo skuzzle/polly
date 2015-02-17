@@ -270,6 +270,7 @@ public class MyPlugin extends PollyPlugin {
         result.add(OrionController.WRITE_ORION_PREMISSION);
         result.add(OrionController.ROUTE_ORION_PREMISSION);
         result.add(OrionController.MANAGE_RACE_PERMISSION);
+        result.add(OrionController.SEARCH_SECTORS_PERMISSION);
         result.addAll(super.getContainedPermissions());
         return result;
     }
