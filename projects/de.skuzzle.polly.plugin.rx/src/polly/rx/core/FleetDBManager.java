@@ -33,9 +33,7 @@ public class FleetDBManager {
     private static final Set<String> forbiddenOwners;
     static {
         forbiddenOwners = new HashSet<>();
-        forbiddenOwners.add("xamand"); //$NON-NLS-1$
     }
-
     private final PersistenceManagerV2 persistence;
 
 
