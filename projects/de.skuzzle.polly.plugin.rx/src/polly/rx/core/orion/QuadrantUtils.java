@@ -318,7 +318,7 @@ public final class QuadrantUtils {
             FleetHeatMap heatMap) {
         final Map<Sector, Integer> map = heatMap.getSectorHeatMap(user, quad);
         final int max = getMax(map);
-        final int min = 0;
+        final int min = getMinGreater0(map);
 
         final int ss = 10; // sector size in pixels
         final Color background = new Color(51, 51, 102, 255);
@@ -363,6 +363,14 @@ public final class QuadrantUtils {
 
     private static int getMax(Map<Sector, Integer> m) {
         return m.values().stream().max(Integer::compare).orElse(0);
+    }
+
+    private static int getMinGreater0(Map<Sector, Integer> m) {
+        return m.values().stream()
+                .filter(i -> i != null)
+                .filter(i -> i > 0)
+                .min(Integer::compare)
+                .orElse(0);
     }
 
     public static BufferedImage createQuadImage(Quadrant quad) {
