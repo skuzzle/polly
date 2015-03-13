@@ -1,5 +1,6 @@
 package polly.rx.httpv2.view.orion;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,8 +13,10 @@ import polly.rx.core.orion.model.SectorType;
 
 
 public final class Images {
-    
-    public static BufferedImage[] EMPTY_ROOM; 
+
+    public static final BufferedImage[] EMPTY_ROOM;
+
+    private static final BufferedImage GRADIENT;
 
     private final static Map<String, BufferedImage> CACHE;
     static {
@@ -25,8 +28,18 @@ public final class Images {
             final String name = "" + (e.getId() + i) + ".gif"; //$NON-NLS-1$ //$NON-NLS-2$
             EMPTY_ROOM[i] = getImage(name);
         }
+        GRADIENT = getImage("gradient.jpg");
     }
-    
+
+    /**
+     * Gets a gradient color between green and red where 0 percentage is full
+     * green and 1 percentage is full red.
+     */
+    public static Color getGradientColor(double percentage) {
+        final int gradWidth = GRADIENT.getWidth() - 1;
+        final int x = (int) Math.floor(gradWidth * percentage);
+        return new Color(GRADIENT.getRGB(x, 0));
+    }
 
     public static BufferedImage getImage(String name) {
         synchronized (CACHE) {
@@ -49,8 +62,8 @@ public final class Images {
         }
         return new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     }
-    
-    
-    
+
+
+
     private Images() {}
 }

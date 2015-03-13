@@ -29,6 +29,7 @@ import polly.rx.core.orion.pathplanning.Graph;
 import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
 import polly.rx.core.orion.pathplanning.Graph.LazyBuilder;
 import polly.rx.entities.RxRessource;
+import polly.rx.httpv2.view.orion.Images;
 import polly.rx.parsing.ParseException;
 import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
@@ -350,15 +351,8 @@ public final class QuadrantUtils {
     }
 
     private static Color getColor(int min, int max, int actual) {
-        final double percentage = (double) actual / (double) max;
-        return getColor(1.0 - percentage);
-    }
-
-    private static Color getColor(double power) {
-        final double H = power * 0.4; // Hue
-        final double S = 0.9; // Saturation
-        final double B = 0.9; // Brightness
-        return Color.getHSBColor((float) H, (float) S, (float) B);
+        final double percentage = (double) (actual - min) / (double) (max - min);
+        return Images.getGradientColor(percentage);
     }
 
     private static int getMax(Map<Sector, Integer> m) {
