@@ -68,7 +68,7 @@ public class RxCaptchaKiller {
             final String fileName = b.toString()  + ".jpg"; //$NON-NLS-1$
             final Path source = captcha.tempFile.toPath();
             final Path target = this.captchaHistoryDir.toPath().resolve(fileName);
-            if (Files.exists(target)) {
+            if (!Files.exists(target)) {
                 tryMove(source, target);
             }
         }
