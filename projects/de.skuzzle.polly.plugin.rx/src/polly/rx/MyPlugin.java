@@ -318,13 +318,17 @@ public class MyPlugin extends PollyPlugin {
 
         // Create captcha database#
         final File pluginFolder = getPluginFolder();
-        final File captchas = new File(pluginFolder, "captchas"); //$NON-NLS-1$
-        if (!captchas.exists()) {
-            captchas.mkdirs();
+        final File captchaDb = new File(pluginFolder, "captchas"); //$NON-NLS-1$
+        if (!captchaDb.exists()) {
+            captchaDb.mkdirs();
         }
-        this.captchaDatabase = new ImageDatabase(captchas.getPath(),
-                new File(captchas, "db.txt").getPath()); //$NON-NLS-1$
-        this.captchaKiller = new RxCaptchaKiller(this.captchaDatabase);
+        final File captchaHistory = new File(pluginFolder, "captcha-history"); //$NON-NLS-1$
+        if (!captchaHistory.exists()) {
+            captchaHistory.mkdirs();
+        }
+        this.captchaDatabase = new ImageDatabase(captchaDb.getPath(),
+                new File(captchaDb, "db.txt").getPath()); //$NON-NLS-1$
+        this.captchaKiller = new RxCaptchaKiller(this.captchaDatabase, captchaHistory);
 
         // relearn database
         final File learning = new File(pluginFolder, "learning"); //$NON-NLS-1$
@@ -336,7 +340,8 @@ public class MyPlugin extends PollyPlugin {
         // ORION
         final DBOrionAccess dboa = new DBOrionAccess(getMyPolly().persistence());
         final WormholeProvider holeProvider = new WLSWormholeProvider();
-        final DBFleetHeatMap heatMap = new DBFleetHeatMap(getMyPolly().persistence());
+        final DBFleetHeatMap heatMap = new DBFleetHeatMap(getMyPolly().persistence(),
+                dboa.getQuadrantProvider());
         final FleetTracker tracker = new MemoryFleetTracker(heatMap);
         final ResourcePriceProvider priceProvider = new QZoneResourcePriceProvider();
         final VenadUserMapper userMapper = new VenadUserMapper(getMyPolly().users());

@@ -8,9 +8,11 @@ import polly.rx.core.orion.model.Sector;
 
 public interface FleetHeatMap {
 
-    public int getTimes(String venadName, Sector sector);
+    int getTimes(String venadName, Sector sector);
 
-    public void update(Fleet fleet);
+    void update(Fleet fleet);
 
     Map<Sector, Integer> getSectorHeatMap(String venadName, Quadrant quadrant);
+
+    Map<Quadrant, Map<Sector, Integer>> getUserHeatMaps(String venad);
 }

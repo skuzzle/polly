@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -321,6 +322,25 @@ public final class QuadrantUtils {
         final int max = getMax(map);
         final int min = getMinGreater0(map);
 
+        return drawSingleHeatMap(quad, map, max, min);
+    }
+
+    public static Map<Quadrant, BufferedImage> drawUserHeatMap(String user,
+            FleetHeatMap heatMap) {
+        final Map<Quadrant, Map<Sector, Integer>> heatMaps = heatMap.getUserHeatMaps(user);
+        final int min = getMinGreater02(heatMaps);
+        final int max = getMax2(heatMaps);
+
+        final Map<Quadrant, BufferedImage> result = new LinkedHashMap<>(heatMaps.size());
+        heatMaps.forEach((quad, map) -> {
+            final BufferedImage img = drawSingleHeatMap(quad, map, max, min);
+            result.put(quad, img);
+        });
+        return result;
+    }
+
+    private static BufferedImage drawSingleHeatMap(Quadrant quad,
+            final Map<Sector, Integer> map, final int max, final int min) {
         final int ss = 10; // sector size in pixels
         final Color background = new Color(51, 51, 102, 255);
         final BufferedImage img = new BufferedImage(quad.getMaxX() * ss, quad.getMaxY()
@@ -359,6 +379,21 @@ public final class QuadrantUtils {
         return m.values().stream().max(Integer::compare).orElse(0);
     }
 
+    private static int getMax2(Map<Quadrant, Map<Sector, Integer>> m) {
+        return m.values().stream()
+                .flatMap(map -> map.values().stream())
+                .max(Integer::compare)
+                .orElse(0);
+    }
+
+    private static int getMinGreater02(Map<Quadrant, Map<Sector, Integer>> m) {
+        return m.values().stream()
+                .flatMap(map -> map.values().stream())
+                .filter(i -> i != null)
+                .filter(i -> i > 0)
+                .min(Integer::compare)
+                .orElse(0);
+    }
     private static int getMinGreater0(Map<Sector, Integer> m) {
         return m.values().stream()
                 .filter(i -> i != null)

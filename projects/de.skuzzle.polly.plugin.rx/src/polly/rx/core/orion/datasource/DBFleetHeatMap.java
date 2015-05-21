@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import polly.rx.core.orion.FleetHeatMap;
+import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.model.Fleet;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
@@ -20,14 +21,31 @@ import de.skuzzle.polly.sdk.time.Time;
 public class DBFleetHeatMap implements FleetHeatMap {
 
     private final PersistenceManagerV2 persistence;
+    private final QuadrantProvider quadrantProvider;
 
-    public DBFleetHeatMap(PersistenceManagerV2 persistence) {
+    public DBFleetHeatMap(PersistenceManagerV2 persistence, QuadrantProvider quadProvider) {
         this.persistence = persistence;
+        this.quadrantProvider = quadProvider;
     }
 
     @Override
     public int getTimes(String venadName, Sector sector) {
         return findEntries(venadName, sector).size();
+    }
+
+    @Override
+    public Map<Quadrant, Map<Sector, Integer>> getUserHeatMaps(String venad) {
+        final Map<Quadrant, Map<Sector, Integer>> result = new HashMap<>();
+        try (final Read read = this.persistence.read()) {
+            for (final Quadrant quad : this.quadrantProvider.getAllQuadrants()) {
+                final Map<Sector, Integer> heatMap = getSectorHeatMap(venad, quad);
+                if (!heatMap.isEmpty()) {
+                    result.put(quad, heatMap);
+                }
+            }
+
+        }
+        return result;
     }
 
     @Override

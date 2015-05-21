@@ -9,6 +9,7 @@ import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -96,6 +97,7 @@ public class OrionController extends PollyController {
     public final static String PAGE_ALIEN_MANAGEMENT = "/pages/orion/manageAliens"; //$NON-NLS-1$
     public final static String PAGE_PORTALS = "/pages/orion/portals"; //$NON-NLS-1$
     public final static String PAGE_SECTORS = "/pages/sectors"; //$NON-NLS-1$
+    public final static String PAGE_USER_HEATMAPS = "/pages/userheatmap"; //$NON-NLS-1$
 
     public final static String API_GET_QUADRANT = "/api/orion/quadrant"; //$NON-NLS-1$
     public final static String API_GET_SECTOR_INFO = "/api/orion/sector"; //$NON-NLS-1$
@@ -118,6 +120,7 @@ public class OrionController extends PollyController {
     public final static String API_REMOVE_SPAWN = "/api/orion/removeSpawn"; //$NON-NLS-1$
     public final static String API_GET_PRICES = "/api/orion/prices"; //$NON-NLS-1$
     public final static String API_HEAT_MAP = "/api/orion/heatMap"; //$NON-NLS-1$
+    public final static String API_SINGLE_HEAT_MAP_IMAGE = "/api/orion/heatMapImage"; //$NON-NLS-1$
 
     private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
@@ -129,6 +132,7 @@ public class OrionController extends PollyController {
     private final static String CONTENT_SHARE_ROUTE = "/polly/rx/httpv2/view/orion/route.share.html"; //$NON-NLS-1$
     private final static String CONTENT_PORTALS = "/polly/rx/httpv2/view/portals.overview.html"; //$NON-NLS-1$
     private final static String CONTENT_SECTOR_SEARCH = "/polly/rx/httpv2/view/sectors.overview.html"; //$NON-NLS-1$
+    private final static String CONTENT_USER_HEATMAPS = "/polly/rx/httpv2/view/user.heatmaps.html"; //$NON-NLS-1$
 
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
     private final static String ORION_NAME_KEY = "htmlOrionName"; //$NON-NLS-1$
@@ -145,6 +149,8 @@ public class OrionController extends PollyController {
     private final static String ROUTE_TO_KEY = "routeTo"; //$NON-NLS-1$
     private final static String ROUTE_OPTIONS_KEY = "routeOptions"; //$NON-NLS-1$
     private final static String ROUTE_COUNT_KEY = "routeCount"; //$NON-NLS-1$
+
+    private static final String HEAT_MAPS_KEY = "heatMaps"; //$NON-NLS-1$
 
     public final static class DisplaySector extends SectorDecorator {
 
@@ -514,6 +520,48 @@ public class OrionController extends PollyController {
         }
         final InputStream in = new FastByteArrayInputStream(out);
         return new HttpInputStreamAnswer(200, in);
+    }
+
+    @Get(PAGE_USER_HEATMAPS)
+    public HttpAnswer getUserHeatmaps(@Param("venad") String venad,
+            @Param("user") String user, @Param("pw") String pw)
+            throws AlternativeAnswerException {
+
+        // -checkLogin(user, pw);
+
+        final FleetHeatMap heatMap = Orion.INSTANCE.getHeatMap();
+        final Map<Quadrant, BufferedImage> images = QuadrantUtils.drawUserHeatMap(venad, heatMap);
+        getSession().set(HEAT_MAPS_KEY, images);
+
+        final Map<String, Object> context = createContext(CONTENT_USER_HEATMAPS);
+        context.put("maps", images); //$NON-NLS-1$
+        context.put("venad", venad); //$NON-NLS-1$
+        return makeAnswer(context);
+
+    }
+
+    @Get(API_SINGLE_HEAT_MAP_IMAGE)
+    public HttpAnswer getSessionHeatMap(@Param("num") int num) {
+        final Map<Quadrant, BufferedImage> images = getSession().get(HEAT_MAPS_KEY,
+                Collections.emptyMap());
+
+        if (num >= 0 && num <= images.size()) {
+            final Iterator<BufferedImage> it = images.values().iterator();
+
+            for (int i = 0; i < num - 1; ++i) {
+                it.next();
+            }
+            final BufferedImage image = it.next();
+            final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
+            try {
+                ImageIO.write(image, "png", out); //$NON-NLS-1$
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            final InputStream in = new FastByteArrayInputStream(out);
+            return new HttpInputStreamAnswer(200, in);
+        }
+        return HttpAnswers.newStringAnswer(404, "image not found"); //$NON-NLS-1$
     }
 
     @Get(API_REQUEST_CODE)
