@@ -94,7 +94,7 @@ public class ImageDatabase {
         if (cr.captcha == null) {
             newFile = findFileName(classifyFolder, "unknown_"); //$NON-NLS-1$
         } else {
-            newFile = new File(classifyFolder, cr.captcha);
+            newFile = new File(classifyFolder, cr.captcha.replace('?', '_'));
         }
         if (!newFile.exists()) {
             try {
