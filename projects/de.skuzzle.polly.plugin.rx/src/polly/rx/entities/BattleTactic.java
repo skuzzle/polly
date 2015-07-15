@@ -4,13 +4,13 @@ import polly.rx.MSG;
 
 
 public enum BattleTactic {
-    NORMAL, RAUBZUG, MACHTDEMO, TPT, SCHNITT, NAHKAMPF, SYSTEM, AUSWEICH, TT, ZANGE, 
-    ABGESICHERT, SONDIERUNG, FERN, MULTIVEKTOR, KONZENTRIERT, VERTREIBEN, KRALLE, SICHEL, 
+    NORMAL, RAUBZUG, MACHTDEMO, TPT, SCHNITT, NAHKAMPF, SYSTEM, AUSWEICH, TT, ZANGE,
+    ABGESICHERT, SONDIERUNG, FERN, MULTIVEKTOR, KONZENTRIERT, VERTREIBEN, KRALLE, SICHEL,
     HITNRUN, HINTERHALT, STURM, DAUERBESCHUSS, ALIEN, SEKTOR_WACHE;
-    
+
     public static BattleTactic parseTactic(String tactic) {
         tactic = tactic.trim();
-        
+
         if (tactic.equals("Normaler Angriff")) { return BattleTactic.NORMAL; } //$NON-NLS-1$
         else if(tactic.equals("Raubzug")) { return BattleTactic.RAUBZUG; } //$NON-NLS-1$
         else if(tactic.equals("Machtdemonstration")) { return BattleTactic.MACHTDEMO; } //$NON-NLS-1$
@@ -35,12 +35,13 @@ public enum BattleTactic {
         else if(tactic.equals("Dauerbeschuss")) { return BattleTactic.DAUERBESCHUSS; } //$NON-NLS-1$
         else if(tactic.equals("Alien Angriff")) { return BattleTactic.ALIEN; } //$NON-NLS-1$
         else if (tactic.equals("Sprungkampf - Eindringlingsgefecht")) { return BattleTactic.SEKTOR_WACHE; } //$NON-NLS-1$
-        
+        else if (tactic.startsWith("Eindringen - Normaler Angriff")) { return BattleTactic.SEKTOR_WACHE; } //$NON-NLS-1$
+
         throw new IllegalArgumentException("invalid tactic: " + tactic); //$NON-NLS-1$
     }
-    
-    
-    
+
+
+
     @Override
     public String toString() {
         switch (this) {
