@@ -34,7 +34,7 @@ public enum BattleTactic {
         else if(tactic.equals("Sturmangriff")) { return BattleTactic.STURM; } //$NON-NLS-1$
         else if(tactic.equals("Dauerbeschuss")) { return BattleTactic.DAUERBESCHUSS; } //$NON-NLS-1$
         else if(tactic.equals("Alien Angriff")) { return BattleTactic.ALIEN; } //$NON-NLS-1$
-        else if (tactic.equals("Sprungkampf - Eindringlingsgefecht")) { return BattleTactic.SEKTOR_WACHE; } //$NON-NLS-1$
+        else if (tactic.startsWith("Sprungkampf - Eindringlingsgefecht")) { return BattleTactic.SEKTOR_WACHE; } //$NON-NLS-1$
         else if (tactic.startsWith("Eindringen - Normaler Angriff")) { return BattleTactic.SEKTOR_WACHE; } //$NON-NLS-1$
 
         throw new IllegalArgumentException("invalid tactic: " + tactic); //$NON-NLS-1$
