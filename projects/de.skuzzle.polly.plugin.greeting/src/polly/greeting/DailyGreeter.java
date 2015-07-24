@@ -23,9 +23,16 @@ public class DailyGreeter {
         GREETINGS = new HashSet<String>(Arrays.asList(greetings));
     }
     
+    private final static Set<String> QUESTIONS;
+    static {
+        final String[] questions = MSG.greeterQuestions.split(","); //$NON-NLS-1$
+        QUESTIONS = new HashSet<String>(Arrays.asList(questions));
+    }
+    
     
     
     private final Set<IrcUser> greeted;
+    private final Set<IrcUser> answered;
     
     private final UserSpottedListener spottedListener = new UserSpottedListener() {
         @Override
@@ -53,15 +60,27 @@ public class DailyGreeter {
         
         
         private final void deliverGreet(MessageEvent e) {
-            if (greeted.contains(e.getUser())) {
-                return;
-            }
             final String msg = e.getMessage().toLowerCase();
+            if (greeted.contains(e.getUser())) {
+                if (answered.contains(e.getUser())){
+                    return;
+                }
+                for (String question : QUESTIONS) {
+                    String incomingQuestion = question.toLowerCase();
+                    if (msg.equals(incomingQuestion)) {
+                        answered.add(e.getUser());
+                        String answer = "Gut!" + " Danke der Nachfrage " + e.getUser().getNickName() + ".";
+                        e.getSource().sendMessage(e.getChannel(), answer, this);
+                        return;
+                    }
+                } 
+            }
+
             final String nick = e.getSource().getNickname().toLowerCase();
             if (!msg.contains(nick)) {
                 return;
             }
-            
+
             for (String greeting : GREETINGS) {
             	String incomingGreet = greeting.toLowerCase() + " " + nick; //$NON-NLS-1$
                 if (msg.contains(incomingGreet)) {
@@ -78,6 +97,7 @@ public class DailyGreeter {
     
     public DailyGreeter() {
         this.greeted = Collections.synchronizedSet(new HashSet<IrcUser>());
+        this.answered = Collections.synchronizedSet(new HashSet<IrcUser>());
     }
     
     
