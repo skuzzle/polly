@@ -63,36 +63,40 @@ public class RxCaptchaKiller {
 
     public String decodeCurrentCaptcha() {
         final CaptchaResult captcha = readCaptcha();
-        final List<BoundingBox> boxes = new ArrayList<>();
-        ImgUtil.extractFeatures(captcha.capthaImg, boxes);
-
         final StringBuilder b = new StringBuilder();
-        boolean needClassification = false;
-        for (final BoundingBox bb : boxes) {
-            final IplImage extracted = ImgUtil.imageFromBoundingBox(bb);
-
-            final String c = this.db.tryClassify(extracted, bb);
-            needClassification |= c.equals("?"); //$NON-NLS-1$
-            b.append(c);
+        
+        boolean solvedViaOcr = false;
+        // try alternate decoding via ocr
+        String ocrResult = decodeViaOCR(captcha.tempFile);
+        if(!ocrResult.isEmpty() && ocrResult.length() == 4) {
+            solvedViaOcr = true;
+            b.setLength(0);
+            b.append(ocrResult);
         }
-        if (needClassification){
-            // try alternate decoding via ocr
-            String ocrResult = decodeViaOCR(captcha.tempFile);
-            if(!ocrResult.isEmpty() && ocrResult.length() == 4) {
-                needClassification = false;
-                b.setLength(0);
-                b.append(ocrResult);
+        if(!solvedViaOcr)
+        {
+            b.setLength(0); // reset StringBuilder
+            final List<BoundingBox> boxes = new ArrayList<>();
+            ImgUtil.extractFeatures(captcha.capthaImg, boxes);
+    
+            boolean needClassification = false;
+            for (final BoundingBox bb : boxes) {
+                final IplImage extracted = ImgUtil.imageFromBoundingBox(bb);
+    
+                final String c = this.db.tryClassify(extracted, bb);
+                needClassification |= c.equals("?"); //$NON-NLS-1$
+                b.append(c);
             }
-        }
-        if (needClassification) {
-            captcha.captcha = b.toString();
-            this.db.needsClassification(captcha);
-        } else {
-            final String fileName = b.toString()  + fileExtension;
-            final Path source = captcha.tempFile.toPath();
-            final Path target = this.captchaHistoryDir.toPath().resolve(fileName);
-            if (!Files.exists(target)) {
-                tryMove(source, target);
+            if (needClassification) {
+                captcha.captcha = b.toString();
+                this.db.needsClassification(captcha);
+            } else {
+                final String fileName = b.toString()  + fileExtension;
+                final Path source = captcha.tempFile.toPath();
+                final Path target = this.captchaHistoryDir.toPath().resolve(fileName);
+                if (!Files.exists(target)) {
+                    tryMove(source, target);
+                }
             }
         }
         return b.toString();
