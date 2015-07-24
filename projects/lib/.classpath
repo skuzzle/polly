@@ -14,5 +14,10 @@
 	<classpathentry kind="lib" path="mysql-connector-java-5.1.17-bin.jar"/>
 	<classpathentry kind="lib" path="velocity-1.7.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="jna.jar"/>
+	<classpathentry kind="lib" path="jai_imageio.jar"/>
+	<classpathentry kind="lib" path="tess4j.jar"/>
+	<classpathentry kind="lib" path="opencv-2411.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -12,6 +12,7 @@ import javax.naming.ConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.opencv.core.Core;
 
 import de.skuzzle.polly.core.commandline.AbstractArgumentParser;
 import de.skuzzle.polly.core.commandline.ParameterException;
@@ -33,6 +34,10 @@ import de.skuzzle.polly.sdk.resources.LocaleProvider;
 
 
 public class Polly {
+
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
 
     public static Version getPollyVersion() {
         String version = Polly.class.getPackage().getImplementationVersion();

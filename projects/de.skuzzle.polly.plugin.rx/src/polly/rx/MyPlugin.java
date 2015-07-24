@@ -123,6 +123,9 @@ public class MyPlugin extends PollyPlugin {
 
     public final static String LOGGING_PLUGUIN_CFG = "plugin.revorix.cfg"; //$NON-NLS-1$
     public final static String CAPTCHA_ANONYMIZE = "anonymize"; //$NON-NLS-1$
+    public final static String CAPTCHA_TESSDATA_PREFIX = "tessdataPrefix"; //$NON-NLS-1$
+    public final static String DEFAULT_TESSDATA_PREFIX = "plugins/polly.rx"; //$NON-NLS-1$
+    private final String tessdataPrefix;
 
     private final FleetDBManager fleetDBManager;
     private final TrainManagerV2 trainManager;
@@ -148,7 +151,8 @@ public class MyPlugin extends PollyPlugin {
         }
         
         Anonymizer.setAnonymize(loggingCfg.readBoolean(CAPTCHA_ANONYMIZE));
-        
+        this.tessdataPrefix = loggingCfg.readString(CAPTCHA_TESSDATA_PREFIX, DEFAULT_TESSDATA_PREFIX);
+
         this.chatProvider = new DBOrionChatProvider(myPolly.persistence());
         addCommand(new IGMCommand(myPolly, this.chatProvider));
 
@@ -344,7 +348,7 @@ public class MyPlugin extends PollyPlugin {
         }
         this.captchaDatabase = new ImageDatabase(captchaDb.getPath(),
                 new File(captchaDb, "db.txt").getPath()); //$NON-NLS-1$
-        this.captchaKiller = new RxCaptchaKiller(this.captchaDatabase, captchaHistory);
+        this.captchaKiller = new RxCaptchaKiller(this.captchaDatabase, captchaHistory, tessdataPrefix);
 
         // relearn database
         final File learning = new File(pluginFolder, "learning"); //$NON-NLS-1$

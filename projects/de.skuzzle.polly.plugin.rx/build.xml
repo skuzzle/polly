@@ -21,6 +21,11 @@
         javacpp.jar
         javacv.jar
         javacv-windows-x86_64.jar
+        jna.jar
+        tess4j.jar
+        jai_imageio.jar
+        commons-io-2.4.jar
+        opencv-2411.jar
     "/>
     
     <!--

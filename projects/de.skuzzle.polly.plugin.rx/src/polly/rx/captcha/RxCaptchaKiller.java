@@ -3,6 +3,7 @@ package polly.rx.captcha;
 import static com.googlecode.javacv.cpp.opencv_highgui.CV_LOAD_IMAGE_GRAYSCALE;
 import static com.googlecode.javacv.cpp.opencv_highgui.cvLoadImage;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,6 +16,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
+
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Scalar;
+import org.opencv.highgui.Highgui;
+import org.opencv.imgproc.Imgproc;
+
 import polly.rx.captcha.ImgUtil.BoundingBox;
 
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
@@ -26,6 +37,7 @@ public class RxCaptchaKiller {
     private final static String CAPTCHA_URL = "http://www.revorix.info/gfx/code/code.png"; //$NON-NLS-1$
     private final ImageDatabase db;
     private final File captchaHistoryDir;
+    private final String tessdataPrefix;
 
 
     public final static class CaptchaResult {
@@ -41,9 +53,10 @@ public class RxCaptchaKiller {
 
 
 
-    public RxCaptchaKiller(ImageDatabase db, File captchaHistory) {
+    public RxCaptchaKiller(ImageDatabase db, File captchaHistory, String tessdataPrefix) {
         this.db = db;
         this.captchaHistoryDir = captchaHistory;
+        this.tessdataPrefix = tessdataPrefix;
     }
 
 
@@ -61,6 +74,15 @@ public class RxCaptchaKiller {
             final String c = this.db.tryClassify(extracted, bb);
             needClassification |= c.equals("?"); //$NON-NLS-1$
             b.append(c);
+        }
+        if (needClassification){
+            // try alternate decoding via ocr
+            String ocrResult = decodeViaOCR(captcha.tempFile);
+            if(!ocrResult.isEmpty() && ocrResult.length() == 4) {
+                needClassification = false;
+                b.setLength(0);
+                b.append(ocrResult);
+            }
         }
         if (needClassification) {
             captcha.captcha = b.toString();
@@ -112,5 +134,44 @@ public class RxCaptchaKiller {
             e.printStackTrace();
             return null;
         }
+    }
+
+
+
+    private String decodeViaOCR(File file) {
+        // alternate classification via OCR
+        // first some image processing
+        // load image
+        Mat image = Highgui.imread(file.toString(), Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+        // enlarge
+        Imgproc.pyrUp(image, image);
+        // edge detection
+        final double thresh = 100;
+        Mat cannied = image.clone();
+        Imgproc.Canny(image, cannied, thresh, thresh * 3);
+        // contours
+        List<MatOfPoint> contours = new ArrayList<>();
+        Imgproc.findContours(cannied, contours, new Mat(), Imgproc.RETR_CCOMP,
+                Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.drawContours(image, contours, -1, new Scalar(255));
+        // cool threshold image
+        Imgproc.threshold(image, image, 0, 255, Imgproc.THRESH_OTSU);
+        // black font on white background
+        Imgproc.threshold(image, image, 111, 255, Imgproc.THRESH_BINARY_INV);
+        // convert Mat to buffered Image for ocr engine
+        final BufferedImage afterImgproc = ImgUtil.Mat2BufferedImage(image);
+        // set up OCR engine
+        ITesseract instance = new Tesseract(); // JNA Interface Mapping
+        instance.setDatapath(tessdataPrefix);
+        instance.setPageSegMode(8);
+        instance.setLanguage("rx"); //$NON-NLS-1$
+        try {
+            String ocrResult = instance.doOCR(afterImgproc);
+            return ocrResult.toLowerCase().trim().replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        } catch (TesseractException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return new String();
     }
 }
