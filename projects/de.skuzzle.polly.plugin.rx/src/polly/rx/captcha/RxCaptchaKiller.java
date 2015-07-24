@@ -22,6 +22,7 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 public class RxCaptchaKiller {
 
+    private final static String fileExtension = ".png"; //$NON-NLS-1$
     private final static String CAPTCHA_URL = "http://www.revorix.info/gfx/code/code.png"; //$NON-NLS-1$
     private final ImageDatabase db;
     private final File captchaHistoryDir;
@@ -65,7 +66,7 @@ public class RxCaptchaKiller {
             captcha.captcha = b.toString();
             this.db.needsClassification(captcha);
         } else {
-            final String fileName = b.toString()  + ".jpg"; //$NON-NLS-1$
+            final String fileName = b.toString()  + fileExtension;
             final Path source = captcha.tempFile.toPath();
             final Path target = this.captchaHistoryDir.toPath().resolve(fileName);
             if (!Files.exists(target)) {
@@ -91,7 +92,7 @@ public class RxCaptchaKiller {
             final URL url = new URL(CAPTCHA_URL);
             final byte[] buffer = new byte[1024];
             final File tempFile = File.createTempFile("captcha_",  //$NON-NLS-1$
-                    "" + System.nanoTime());  //$NON-NLS-1$
+                    "" + System.nanoTime() + fileExtension);  //$NON-NLS-1$
             tempFile.deleteOnExit();
 
             final HttpURLConnection c = Anonymizer.openConnection(url);
