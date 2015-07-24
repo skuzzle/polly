@@ -1,9 +1,11 @@
 package polly.rx;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import polly.rx.captcha.Anonymizer;
 import polly.rx.captcha.ImageDatabase;
 import polly.rx.captcha.RxCaptchaKiller;
 import polly.rx.commands.AddTrainCommand;
@@ -73,6 +75,8 @@ import polly.rx.httpv2.SectorTableModel;
 import polly.rx.httpv2.ShipsForScanTableModel;
 import polly.rx.httpv2.StatisticsGatherer;
 import polly.rx.httpv2.TrainingTableModel;
+import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.Types;
@@ -117,6 +121,8 @@ public class MyPlugin extends PollyPlugin {
     public final static String DOCK_LEVEL = "DOCK_LEVEL"; //$NON-NLS-1$
     public static final String REPAIR_TIME_WARNING = "REPAIR_TIME_WARNING"; //$NON-NLS-1$
 
+    public final static String LOGGING_PLUGUIN_CFG = "plugin.revorix.cfg"; //$NON-NLS-1$
+    public final static String CAPTCHA_ANONYMIZE = "anonymize"; //$NON-NLS-1$
 
     private final FleetDBManager fleetDBManager;
     private final TrainManagerV2 trainManager;
@@ -132,7 +138,17 @@ public class MyPlugin extends PollyPlugin {
                 throws DuplicatedSignatureException, IncompatiblePluginException {
         super(myPolly);
 
-
+        ConfigurationProvider cfgProvider = myPolly.configuration();
+        
+        Configuration loggingCfg = null;
+        try {
+            loggingCfg = cfgProvider.open(LOGGING_PLUGUIN_CFG);
+        } catch (IOException e) {
+            loggingCfg = cfgProvider.emptyConfiguration();
+        }
+        
+        Anonymizer.setAnonymize(loggingCfg.readBoolean(CAPTCHA_ANONYMIZE));
+        
         this.chatProvider = new DBOrionChatProvider(myPolly.persistence());
         addCommand(new IGMCommand(myPolly, this.chatProvider));
 
