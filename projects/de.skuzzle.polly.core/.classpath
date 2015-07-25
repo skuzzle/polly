@@ -35,5 +35,6 @@
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/javacpp.jar"/>
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/javacv-windows-x86_64.jar"/>
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/javacv.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/opencv-2411.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

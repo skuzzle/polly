@@ -20,5 +20,10 @@
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/javacpp.jar"/>
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/javacv-windows-x86_64.jar"/>
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/javacv.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/jna.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/tess4j.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/jai_imageio.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/opencv-2411.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
