@@ -117,7 +117,7 @@
                encoding="${src.encoding}"
                debug="on" 
                listfiles="true"
-			   includeAntRuntime="false">
+               includeAntRuntime="false">
 
             <compilerarg value="-proc:none"/>
         </javac>
@@ -139,7 +139,7 @@
                target="${target.version}" 
                encoding="${src.encoding}"
                debug="off" 
-			   includeAntRuntime="false">
+               includeAntRuntime="false">
 
             <compilerarg value="-proc:none"/>
         </javac>
@@ -197,7 +197,7 @@
     
     <!-- Creates distribution files with debug information. -->
     <target name="dist.debug" depends="clean, compile.debug">
-    	<echo message="Dist ${jar.title}" />
+        <echo message="Dist ${jar.title}" />
         <property name="bin.dir" value="${build.debug.dir}"/>
         <antcall target="distBin" inheritRefs="true"/>
         <!--<antcall target="distDoc" inheritRefs="true"/>
@@ -208,7 +208,7 @@
     
     <!-- Creates distribution files with no debug information. -->
     <target name="dist.release" depends="clean, compile.release">
-    	<echo message="Dist ${jar.title}" />
+        <echo message="Dist ${jar.title}" />
         <property name="bin.dir" value="${build.release.dir}"/>
         <antcall target="distBin" inheritRefs="true"/>
         <antcall target="distDoc" inheritRefs="true"/>
