@@ -1,8 +1,5 @@
 package polly.rx.captcha;
 
-import static com.googlecode.javacv.cpp.opencv_highgui.CV_LOAD_IMAGE_GRAYSCALE;
-import static com.googlecode.javacv.cpp.opencv_highgui.cvLoadImage;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,8 +25,6 @@ import org.opencv.imgproc.Imgproc;
 
 import polly.rx.captcha.ImgUtil.BoundingBox;
 
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
-
 
 public class RxCaptchaKiller {
 
@@ -42,10 +37,10 @@ public class RxCaptchaKiller {
 
     public final static class CaptchaResult {
         final File tempFile;
-        final IplImage capthaImg;
+        final Mat capthaImg;
         String captcha;
 
-        CaptchaResult(File tempFile, IplImage capthaImg) {
+        CaptchaResult(File tempFile, Mat capthaImg) {
             this.tempFile = tempFile;
             this.capthaImg = capthaImg;
         }
@@ -81,7 +76,7 @@ public class RxCaptchaKiller {
     
             boolean needClassification = false;
             for (final BoundingBox bb : boxes) {
-                final IplImage extracted = ImgUtil.imageFromBoundingBox(bb);
+                final Mat extracted = ImgUtil.imageFromBoundingBox(bb);
     
                 final String c = this.db.tryClassify(extracted, bb);
                 needClassification |= c.equals("?"); //$NON-NLS-1$
@@ -131,8 +126,7 @@ public class RxCaptchaKiller {
                 out.flush();
             }
 
-            final IplImage serverImg = cvLoadImage(tempFile.getPath(),
-                    CV_LOAD_IMAGE_GRAYSCALE);
+            final Mat serverImg = Highgui.imread(tempFile.toString(), Highgui.CV_LOAD_IMAGE_GRAYSCALE);
             return new CaptchaResult(tempFile, serverImg);
         } catch (IOException e) {
             e.printStackTrace();

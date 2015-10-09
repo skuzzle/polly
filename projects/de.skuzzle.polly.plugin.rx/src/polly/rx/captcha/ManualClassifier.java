@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import polly.rx.captcha.ImgUtil.BoundingBox;
+import javax.swing.JFrame;
 
-import com.googlecode.javacv.CanvasFrame;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
-import com.googlecode.javacv.cpp.opencv_highgui;
+import org.opencv.core.Mat;
+import org.opencv.highgui.Highgui;
+
+import polly.rx.captcha.ImgUtil.BoundingBox;
 
 
 public class ManualClassifier {
@@ -49,22 +50,22 @@ public class ManualClassifier {
     public void startClassify() throws IOException {
         final BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
         for (final File file : this.classifyFolder.listFiles(ImageDatabase.PNG_FILES)) {
-            final IplImage img = opencv_highgui.cvLoadImage(file.getPath(), 
-                    opencv_highgui.CV_LOAD_IMAGE_GRAYSCALE);
+            final Mat img = Highgui.imread(file.getPath(), 
+                    Highgui.CV_LOAD_IMAGE_GRAYSCALE);
             
             if (img == null) {
                 continue;
             }
             
-            final CanvasFrame fullFrame = ImgUtil.showImage(img, "Full"); //$NON-NLS-1$
+            final JFrame fullFrame = ImgUtil.showImage(img, "Full"); //$NON-NLS-1$
             fullFrame.setLocation(0, 0);
             
             final List<BoundingBox> boxes = new ArrayList<>();
             ImgUtil.extractFeatures(img, boxes);
             
             for (final BoundingBox box : boxes) {
-                final IplImage extracted = ImgUtil.imageFromBoundingBox(box);
-                final CanvasFrame extrFrame = ImgUtil.showImage(extracted, "Extracted"); //$NON-NLS-1$
+                final Mat extracted = ImgUtil.imageFromBoundingBox(box);
+                final JFrame extrFrame = ImgUtil.showImage(extracted, "Extracted"); //$NON-NLS-1$
                 System.out.println("Classify as:"); //$NON-NLS-1$
                 final String c = r.readLine();
                 if (!c.equals("skip")) { //$NON-NLS-1$
