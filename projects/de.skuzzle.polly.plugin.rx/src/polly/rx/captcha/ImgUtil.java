@@ -1,16 +1,7 @@
 package polly.rx.captcha;
 
-import static com.googlecode.javacv.cpp.opencv_core.cvLine;
-import static com.googlecode.javacv.cpp.opencv_core.cvPoint;
-import static com.googlecode.javacv.cpp.opencv_core.cvScalar;
-import static com.googlecode.javacv.cpp.opencv_core.cvSet;
-import static com.googlecode.javacv.cpp.opencv_imgproc.CV_THRESH_BINARY;
-import static com.googlecode.javacv.cpp.opencv_imgproc.CV_THRESH_OTSU;
-import static com.googlecode.javacv.cpp.opencv_imgproc.cvThreshold;
-
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,12 +12,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opencv.core.Mat;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
-import com.googlecode.javacv.CanvasFrame;
-import com.googlecode.javacv.cpp.opencv_core.CvPoint;
-import com.googlecode.javacv.cpp.opencv_core.CvScalar;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 
 public final class ImgUtil {
@@ -184,36 +179,21 @@ public final class ImgUtil {
     private ImgUtil() {}
     
     
-    public static IplImage part(IplImage whole, BoundingBox part) {
-        final IplImage newImage = IplImage.create(part.width, part.height, whole.depth(), 
-                whole.nChannels());
-        final int wholeWs = whole.widthStep();
-        final int newWs = newImage.widthStep();
-        final int c = whole.nChannels();
-        
-        final ByteBuffer wholeImg = whole.getByteBuffer();
-        final ByteBuffer newImg = newImage.getByteBuffer();
-        
-        for (int y = 0; y < part.height; ++ y) {
-            for (int x = 0; x < part.width; ++x) {
-                final int srcVal = wholeImg.get(y * wholeWs + x * c) & 0xFF;
-                newImg.put(y * newWs + x * c, (byte) srcVal);
-            }
-        }
-        
-        return newImage;
+    public static Mat part(Mat whole, BoundingBox part) {
+        return whole.submat(part.y, part.y + part.height, part.x, part.x + part.width);
     }
     
     
     
-    public static void rle(IplImage image, int minLength, 
+    public static void rle(Mat image, int minLength, 
             Collection<Interval> intervals) {
         
         intervals.clear();
         int threshold = 1;
-        final ByteBuffer img = image.getByteBuffer();
-        final int ws = image.widthStep();
-        final int c = image.nChannels();
+        byte[] img = new byte[(int) (image.total() * image.elemSize())];
+        image.get(0,  0, img);
+        final int ws = (int) image.step1();
+        final int c = image.channels();
         
         for (int y = 0; y < image.height(); ++y) {
             final int lineStart = y * ws;
@@ -222,7 +202,7 @@ public final class ImgUtil {
             while (xEnd != image.width()) {
                 
                 while (xStart < image.width()) {
-                    final int b = img.get(lineStart + xStart * c) & 0xFF;
+                    final int b = img[lineStart + xStart * c] & 0xFF;
                     if (b < threshold) { 
                         ++xStart;
                     } else { 
@@ -232,7 +212,7 @@ public final class ImgUtil {
                 xEnd = xStart;
                 while (xEnd < image.width()) {
                     ++xEnd;
-                    final int b = img.get(lineStart + xEnd * c) & 0xFF;
+                    final int b = img[lineStart + xEnd * c] & 0xFF;
                     if (b < threshold)
                         break;
                 }
@@ -295,51 +275,51 @@ public final class ImgUtil {
     
     
     
-    public static IplImage imageFromRegions(IplImage src, Collection<Interval> rle) {
-        final IplImage img = IplImage.create(src.width(), src.height(), src.depth(), 
-                src.nChannels());
+    public static Mat imageFromRegions(Mat src, Collection<Interval> rle) {
+        final Mat img = new Mat(src.width(), src.height(), src.type(), new Scalar(255));
         
-        cvSet(img, cvScalar(255, 255, 255, 255));
         for (final Interval iv : rle) {
-            final CvPoint start = cvPoint(iv.xStart, iv.y);
-            final CvPoint end = cvPoint(iv.xEnd - 1, iv.y);
-            cvLine(img, start, end, cvScalar(0, 0, 0, 0), 1, 8, 0);
+            final Point start = new Point(iv.xStart, iv.y);
+            final Point end = new Point(iv.xEnd - 1, iv.y);
+            Core.line(img, start, end, new Scalar(0, 0, 0, 0), 1, 8, 0);
         }
         return img;
     }
     
     
     
-    public static void drawPlus(IplImage img, int x, int y) {
+    public static void drawPlus(Mat img, int x, int y) {
         final int LENGTH = 3;
-        final CvScalar c = cvScalar(50, 50, 50, 50);
+        final Scalar c = new Scalar(50, 50, 50, 50);
         
-        cvLine(img, cvPoint(x - LENGTH / 2, y), cvPoint(x + LENGTH / 2, y), c, 1, 8, 0);
-        cvLine(img, cvPoint(x, y - LENGTH / 2), cvPoint(x, y + LENGTH / 2), c, 1, 8, 0);
+        Core.line(img, new Point(x - LENGTH / 2, y), new Point(x + LENGTH / 2, y), c, 1, 8, 0);
+        Core.line(img, new Point(x, y - LENGTH / 2), new Point(x, y + LENGTH / 2), c, 1, 8, 0);
     }
     
     
-    public static void drawBox(IplImage img, BoundingBox box) {
-        final CvScalar c = cvScalar(50, 50, 50, 50);
-        cvLine(img, cvPoint(box.x, box.y), cvPoint(box.x, box.y + box.height), c, 1, 8, 0); // left line
-        cvLine(img, cvPoint(box.x, box.y), cvPoint(box.x + box.width, box.y), c, 1, 8, 0); // top line
-        cvLine(img, cvPoint(box.x + box.width, box.y), cvPoint(box.x + box.width, box.y + box.height), c, 1, 8, 0); // right line
-        cvLine(img, cvPoint(box.x + box.width, box.y + box.height), cvPoint(box.x + box.width, box.y + box.height), c, 1, 8, 0); // bottom line
+    public static void drawBox(Mat img, BoundingBox box) {
+        final Scalar c = new Scalar(50, 50, 50, 50);
+        Core.line(img, new Point(box.x, box.y), new Point(box.x, box.y + box.height), c, 1, 8, 0); // left line
+        Core.line(img, new Point(box.x, box.y), new Point(box.x + box.width, box.y), c, 1, 8, 0); // top line
+        Core.line(img, new Point(box.x + box.width, box.y), new Point(box.x + box.width, box.y + box.height), c, 1, 8, 0); // right line
+        Core.line(img, new Point(box.x + box.width, box.y + box.height), new Point(box.x + box.width, box.y + box.height), c, 1, 8, 0); // bottom line
     }
     
     
     
-    public static void eraseNeighbors(IplImage src, int threshold) {
+    public static void eraseNeighbors(Mat src, int threshold) {
         int FILTER_SIZE = 3;
         assert FILTER_SIZE % 2 != 0 : "Filter size must be odd"; //$NON-NLS-1$
         
-        final IplImage cpy = src.clone();
+        final Mat cpy = src.clone();
         
-        final ByteBuffer cpyImg = cpy.getByteBuffer();
-        final ByteBuffer srcImg = src.getByteBuffer();
+        byte[] cpyImg = new byte[(int) (cpy.total() * cpy.elemSize())];
+        cpy.get(0, 0, cpyImg);
+        byte[] srcImg = new byte[(int) (src.total() * src.elemSize())];
+        src.get(0, 0, srcImg);
         
-        final int ws = src.widthStep();
-        final int c = src.nChannels();
+        final int ws = (int) src.step1();
+        final int c = src.channels();
         final int r = FILTER_SIZE / 2; // border of the filter
         final int lower = -r;
         final int upper = r + 1;
@@ -353,7 +333,7 @@ public final class ImgUtil {
                     for (int j = lower; j < upper; ++j) {
                         final int ty = (y + i) * ws;
                         final int tx = (x + j) * c;
-                        final int val = cpyImg.get(ty + tx) & 0xFF;
+                        final int val = cpyImg[ty + tx] & 0xFF;
                         if (val == 0) {
                             ++sum;
                         }
@@ -362,18 +342,19 @@ public final class ImgUtil {
                 
                 // wipe out current pixel if too many black pixels around
                 if (sum > threshold) {
-                    srcImg.put(y * ws + x * c, (byte) 0);
+                    srcImg[y * ws + x * c] = (byte) 0;
                 }
             }
         }
+        src.put(0, 0, srcImg);
     }
     
     
     
-    public static void extractFeatures(IplImage image, List<BoundingBox> boxes) {
+    public static void extractFeatures(Mat image, List<BoundingBox> boxes) {
         boxes.clear();
         
-        cvThreshold(image, image, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+        Imgproc.threshold(image, image, 0, 255, Imgproc.THRESH_BINARY | Imgproc.THRESH_OTSU);
         ImgUtil.eraseNeighbors(image, 5);
         final List<Interval> rle = new ArrayList<>();
         
@@ -385,30 +366,29 @@ public final class ImgUtil {
     
     
     
-    public static IplImage imageFromBoundingBox(BoundingBox box) {
-        final IplImage img = IplImage.create(box.width, box.height, 
-                8, 1);
+    public static Mat imageFromBoundingBox(BoundingBox box) {
+        final Mat img = new Mat(box.width, box.height, 
+                CvType.CV_8UC1, new Scalar(0));
         
-        cvSet(img, CvScalar.BLACK);
         for (final Interval iv : box.intervals) {
             final Interval ivT = iv.translate(box);
-            final CvPoint start = cvPoint(ivT.xStart, ivT.y);
-            final CvPoint end = cvPoint(ivT.xEnd, ivT.y);
-            cvLine(img, start, end, CvScalar.WHITE, 1, 8, 0);
+            final Point start = new Point(ivT.xStart, ivT.y);
+            final Point end = new Point(ivT.xEnd, ivT.y);
+            Core.line(img, start, end, new Scalar(255), 1, 8, 0);
         }
         return img;
     }
     
     
     
-    public static CanvasFrame showImage(IplImage image, String caption) {
-        final CanvasFrame frame = new CanvasFrame(caption);
-        final int width = image.width();
-        final int height = image.height();
-        frame.setCanvasSize(image.width(), image.height());
-        frame.getCanvas().setSize(width, height);
-        frame.pack();
-        frame.showImage(image);
+    public static JFrame showImage(Mat image, String caption) {
+        final JFrame frame = new JFrame(caption);
+        frame.setSize(image.width() + 4, image.height() + 4);
+        JLabel label = new JLabel();
+        ImageIcon icon = new ImageIcon(Mat2BufferedImage(image));
+        label.setIcon(icon);
+        frame.add(label);
+        frame.setVisible(true);
         return frame;
     }
     

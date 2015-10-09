@@ -1,8 +1,5 @@
 package polly.rx.captcha;
 
-import static com.googlecode.javacv.cpp.opencv_highgui.CV_LOAD_IMAGE_GRAYSCALE;
-import static com.googlecode.javacv.cpp.opencv_highgui.cvLoadImage;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,12 +10,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.opencv.core.Mat;
+import org.opencv.highgui.Highgui;
 
 import polly.rx.captcha.ImgUtil.BoundingBox;
 import polly.rx.captcha.RxCaptchaKiller.CaptchaResult;
@@ -26,8 +25,6 @@ import polly.rx.captcha.RxCaptchaKiller.CaptchaResult;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
-import com.googlecode.javacv.cpp.opencv_highgui;
 
 import de.skuzzle.polly.tools.FileUtil;
 
@@ -42,7 +39,7 @@ public class ImageDatabase {
         public int height;
         public String imgName;
         public String c;
-        public transient WeakReference<IplImage> image;
+        public transient WeakReference<Mat> image;
 
         public DatabaseItem(int centerX, int centerY, int integral, int width,
                 int height, String imgName, String c) {
@@ -120,14 +117,14 @@ public class ImageDatabase {
 
 
 
-    public void learnSingle(IplImage img, BoundingBox box, String character) {
+    public void learnSingle(Mat img, BoundingBox box, String character) {
         this.learnSingle(img, box, character, true);
     }
 
 
 
-    private void learnSingle(IplImage img, BoundingBox box, String character, boolean store) {
-        final IplImage classifiedImg = ImgUtil.imageFromBoundingBox(box);
+    private void learnSingle(Mat img, BoundingBox box, String character, boolean store) {
+        final Mat classifiedImg = ImgUtil.imageFromBoundingBox(box);
 
         final String tc = tryClassify(img, box);
         if (tc.equals("?")) { //$NON-NLS-1$
@@ -148,7 +145,7 @@ public class ImageDatabase {
         final DatabaseItem dbi = new DatabaseItem(centerX, centerY, integral,
                 width, height, character + postfix + ".png", character); //$NON-NLS-1$
         this.database.put(character, dbi);
-        opencv_highgui.cvSaveImage(this.imgDir + "/" + dbi.imgName, classifiedImg); //$NON-NLS-1$
+        Highgui.imwrite(this.imgDir + "/" + dbi.imgName, classifiedImg); //$NON-NLS-1$
 
         if (store) {
             storeDatabase();
@@ -179,7 +176,7 @@ public class ImageDatabase {
             }
 
             System.out.println("Processing code: " + rawName); //$NON-NLS-1$
-            final IplImage image = cvLoadImage(file.getPath(), CV_LOAD_IMAGE_GRAYSCALE);
+            final Mat image = Highgui.imread(file.getPath(), Highgui.CV_LOAD_IMAGE_GRAYSCALE);
             final List<BoundingBox> boxes = new ArrayList<>();
             ImgUtil.extractFeatures(image, boxes);
 
@@ -194,7 +191,7 @@ public class ImageDatabase {
                 final BoundingBox box = boxes.get(i);
 
                 final String character = "" + rawName.charAt(i); //$NON-NLS-1$
-                final IplImage classifiedImg = ImgUtil.imageFromBoundingBox(box);
+                final Mat classifiedImg = ImgUtil.imageFromBoundingBox(box);
 
                 this.learnSingle(classifiedImg, box, character, false);
             }
@@ -204,14 +201,14 @@ public class ImageDatabase {
 
 
 
-    public String tryClassify(IplImage character, BoundingBox box) {
+    public String tryClassify(Mat character, BoundingBox box) {
         double integral = box.getIntegral();
 
         double bestMatch = 0;
         DatabaseItem bestMatchItem = null;
         for (final DatabaseItem dbi : this.database.values()) {
             if (Math.abs(integral - dbi.integral) < MAX_INTEGRAL_DIFF) {
-                final IplImage dbImage = getCachedImage(dbi);
+                final Mat dbImage = getCachedImage(dbi);
 
                 final double match = matchImages(character, box, dbImage, dbi);
                 if (match > bestMatch) {
@@ -230,12 +227,12 @@ public class ImageDatabase {
 
 
 
-    private IplImage getCachedImage(DatabaseItem dbi) {
-        IplImage cached = dbi.image != null ? dbi.image.get() : null;
+    private Mat getCachedImage(DatabaseItem dbi) {
+        Mat cached = dbi.image != null ? dbi.image.get() : null;
         if (dbi.image == null || cached == null) {
-            final IplImage image = cvLoadImage(this.imgDir + "/" + dbi.imgName,  //$NON-NLS-1$
-                    CV_LOAD_IMAGE_GRAYSCALE);
-            dbi.image = new WeakReference<IplImage>(image);
+            final Mat image = Highgui.imread(this.imgDir + "/" + dbi.imgName,  //$NON-NLS-1$
+                    Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+            dbi.image = new WeakReference<Mat>(image);
             return image;
         }
         assert cached != null;
@@ -244,18 +241,20 @@ public class ImageDatabase {
 
 
 
-    private double matchImages(IplImage toClassify, BoundingBox box, IplImage dbImage,
+    private double matchImages(Mat toClassify, BoundingBox box, Mat dbImage,
             DatabaseItem dbi) {
 
-        final int wsC = toClassify.widthStep();
-        final int cC = toClassify.nChannels();
-        final int wsDb = dbImage.widthStep();
-        final int cDb = dbImage.nChannels();
+        final int wsC = (int) toClassify.step1();
+        final int cC = toClassify.channels();
+        final int wsDb = (int) dbImage.step1();
+        final int cDb = dbImage.channels();
 
         final int centerX = (int) box.getCenterX();
         final int centerY = (int) box.getCenterY();
-        final ByteBuffer cBuffer = toClassify.getByteBuffer();
-        final ByteBuffer dbBuffer = dbImage.getByteBuffer();
+        byte[] cBuffer = new byte[(int) (toClassify.total() * toClassify.elemSize())];
+        toClassify.get(0, 0, cBuffer);
+        byte[] dbBuffer = new byte[(int) (dbImage.total() * dbImage.elemSize())];
+        dbImage.get(0, 0, dbBuffer);
 
         double total = 0;
         double positive = 0;
@@ -269,8 +268,8 @@ public class ImageDatabase {
                 int yInDb = (dbi.centerY) + dyC;
 
                 if (inBounds(dbImage, xInDb, yInDb)) {
-                    int valC = cBuffer.get(y * wsC + x * cC);
-                    int valDb = dbBuffer.get(yInDb * wsDb + xInDb * cDb);
+                    int valC = cBuffer[y * wsC + x * cC];
+                    int valDb = dbBuffer[yInDb * wsDb + xInDb * cDb];
                     if (valC == valDb) {
                         positive += 1.0;
                     }
@@ -284,7 +283,7 @@ public class ImageDatabase {
 
 
 
-    private boolean inBounds(IplImage img, int x, int y) {
+    private boolean inBounds(Mat img, int x, int y) {
         return x >= 0 && x < img.width() && y >= 0 && y < img.height();
     }
 

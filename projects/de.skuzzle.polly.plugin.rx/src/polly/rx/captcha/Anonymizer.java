@@ -19,7 +19,7 @@ public class Anonymizer {
     
     static {
         PROXYS = new ArrayList<>();
-        addProxy("134.102.204.220", 8888); //$NON-NLS-1$
+        addProxy("cart.chickenkiller.com", 8888); //$NON-NLS-1$
         /*addProxy("212.144.254.122", 3128); //$NON-NLS-1$
         addProxy("188.138.115.15", 3128); //$NON-NLS-1$
         addProxy("46.165.239.133", 3128); //$NON-NLS-1$
