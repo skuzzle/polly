@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="de.skuzzle.polly.lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" path="cfg"/>
 	<classpathentry kind="src" path="webv2"/>
 	<classpathentry kind="src" path="/de.skuzzle.polly.core.moduleloader"/>
@@ -32,6 +36,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/de.skuzzle.polly.lib/org.eclipse.egit.github.core-3.3.0-SNAPSHOT-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/opencv-2411.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/commons-io-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

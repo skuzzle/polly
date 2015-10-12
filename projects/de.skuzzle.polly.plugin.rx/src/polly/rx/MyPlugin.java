@@ -1,13 +1,8 @@
 package polly.rx;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
-import polly.rx.captcha.Anonymizer;
-import polly.rx.captcha.ImageDatabase;
-import polly.rx.captcha.RxCaptchaKiller;
 import polly.rx.commands.AddTrainCommand;
 import polly.rx.commands.CloseTrainCommand;
 import polly.rx.commands.CrackerCommand;
@@ -19,14 +14,12 @@ import polly.rx.commands.MyVenadCommand;
 import polly.rx.commands.RankCommand;
 import polly.rx.commands.RessComand;
 import polly.rx.commands.RouteCommand;
-import polly.rx.commands.UrlAnonymizationCommand;
 import polly.rx.commands.VenadCommand;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
 import polly.rx.core.orion.FleetTracker;
-import polly.rx.core.orion.LoginCodeManager;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.OrionChatProvider;
 import polly.rx.core.orion.ResourcePriceProvider;
@@ -75,8 +68,6 @@ import polly.rx.httpv2.SectorTableModel;
 import polly.rx.httpv2.ShipsForScanTableModel;
 import polly.rx.httpv2.StatisticsGatherer;
 import polly.rx.httpv2.TrainingTableModel;
-import de.skuzzle.polly.sdk.Configuration;
-import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.Types;
@@ -125,14 +116,11 @@ public class MyPlugin extends PollyPlugin {
     public final static String CAPTCHA_ANONYMIZE = "anonymize"; //$NON-NLS-1$
     public final static String CAPTCHA_TESSDATA_PREFIX = "tessdataPrefix"; //$NON-NLS-1$
     public final static String DEFAULT_TESSDATA_PREFIX = "plugins/polly.rx"; //$NON-NLS-1$
-    private final String tessdataPrefix;
 
     private final FleetDBManager fleetDBManager;
     private final TrainManagerV2 trainManager;
     private final ScoreBoardManager sbeManager;
     private final AZEntryManager azManager;
-    private ImageDatabase captchaDatabase;
-    private RxCaptchaKiller captchaKiller;
     private final OrionChatProvider chatProvider;
 
 
@@ -140,18 +128,6 @@ public class MyPlugin extends PollyPlugin {
     public MyPlugin(MyPolly myPolly)
                 throws DuplicatedSignatureException, IncompatiblePluginException {
         super(myPolly);
-
-        ConfigurationProvider cfgProvider = myPolly.configuration();
-        
-        Configuration loggingCfg = null;
-        try {
-            loggingCfg = cfgProvider.open(LOGGING_PLUGUIN_CFG);
-        } catch (IOException e) {
-            loggingCfg = cfgProvider.emptyConfiguration();
-        }
-        
-        Anonymizer.setAnonymize(loggingCfg.readBoolean(CAPTCHA_ANONYMIZE));
-        this.tessdataPrefix = loggingCfg.readString(CAPTCHA_TESSDATA_PREFIX, DEFAULT_TESSDATA_PREFIX);
 
         this.chatProvider = new DBOrionChatProvider(myPolly.persistence());
         addCommand(new IGMCommand(myPolly, this.chatProvider));
@@ -169,7 +145,6 @@ public class MyPlugin extends PollyPlugin {
         addCommand(new IPCommand(myPolly));
         addCommand(new CrackerCommand(myPolly));
         addCommand(new RessComand(myPolly));
-        addCommand(new UrlAnonymizationCommand(myPolly));
 
         /* fleet db related */
         this.fleetDBManager = new FleetDBManager(myPolly.persistence());
@@ -275,7 +250,7 @@ public class MyPlugin extends PollyPlugin {
 
     @Override
     public Set<String> getContainedPermissions() {
-        Set<String> result = new TreeSet<String>();
+        final Set<String> result = new TreeSet<String>();
         result.add(FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
         result.add(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
         result.add(FleetDBManager.DELETE_BATTLE_REPORT_PERMISSION);
@@ -335,28 +310,6 @@ public class MyPlugin extends PollyPlugin {
 
     @Override
     public void onLoad() throws PluginException {
-
-        // Create captcha database#
-        final File pluginFolder = getPluginFolder();
-        final File captchaDb = new File(pluginFolder, "captchas"); //$NON-NLS-1$
-        if (!captchaDb.exists()) {
-            captchaDb.mkdirs();
-        }
-        final File captchaHistory = new File(pluginFolder, "captcha-history"); //$NON-NLS-1$
-        if (!captchaHistory.exists()) {
-            captchaHistory.mkdirs();
-        }
-        this.captchaDatabase = new ImageDatabase(captchaDb.getPath(),
-                new File(captchaDb, "db.txt").getPath()); //$NON-NLS-1$
-        this.captchaKiller = new RxCaptchaKiller(this.captchaDatabase, captchaHistory, tessdataPrefix);
-
-        // relearn database
-        final File learning = new File(pluginFolder, "learning"); //$NON-NLS-1$
-        if (learning.exists()) {
-            this.captchaDatabase.learnFrom(learning.getPath());
-        }
-
-
         // ORION
         final DBOrionAccess dboa = new DBOrionAccess(getMyPolly().persistence());
         final WormholeProvider holeProvider = new WLSWormholeProvider();
@@ -365,7 +318,6 @@ public class MyPlugin extends PollyPlugin {
         final FleetTracker tracker = new MemoryFleetTracker(heatMap);
         final ResourcePriceProvider priceProvider = new QZoneResourcePriceProvider();
         final VenadUserMapper userMapper = new VenadUserMapper(getMyPolly().users());
-        final LoginCodeManager loginCodeManager = new LoginCodeManager(this.captchaKiller);
         Orion.initialize(
                 dboa.getQuadrantProvider(),
                 dboa.getQuadrantUpdater(),
@@ -376,7 +328,6 @@ public class MyPlugin extends PollyPlugin {
                 tracker,
                 priceProvider,
                 userMapper,
-                loginCodeManager,
                 heatMap
             );
 
@@ -401,7 +352,7 @@ public class MyPlugin extends PollyPlugin {
 
         try {
             addCommand(new RouteCommand(getMyPolly()));
-        } catch (DuplicatedSignatureException e1) {
+        } catch (final DuplicatedSignatureException e1) {
             e1.printStackTrace();
         }
 
@@ -439,14 +390,14 @@ public class MyPlugin extends PollyPlugin {
                     new DockLevelConstraint());
 
 
-        } catch (Exception ignore) {
+        } catch (final Exception ignore) {
             ignore.printStackTrace();
         }
 
         try {
             this.fleetDBManager.cleanInvalidBattleReports();
             this.fleetDBManager.cleanInvalidFleetScans();
-        } catch (DatabaseException e) {
+        } catch (final DatabaseException e) {
             e.printStackTrace();
         }
     }

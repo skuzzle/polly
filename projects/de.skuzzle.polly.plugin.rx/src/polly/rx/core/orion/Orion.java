@@ -17,7 +17,6 @@ public enum Orion implements UniverseFactory {
     INSTANCE;
 
     private ResourcePriceProvider priceProvider;
-    private LoginCodeManager loginCodeManager;
     private QuadrantProvider quadProvider;
     private WormholeProvider holeProvider;
     private VenadUserMapper userMapper;
@@ -37,7 +36,6 @@ public enum Orion implements UniverseFactory {
             PortalProvider portalProvider, AlienManager alienManager,
             PortalUpdater portalUpdater, FleetTracker fleetTracker,
             ResourcePriceProvider priceProvider, VenadUserMapper userMapper,
-            LoginCodeManager loginCodeManager,
             FleetHeatMap heatMap) {
         ;
 
@@ -61,8 +59,6 @@ public enum Orion implements UniverseFactory {
             throw new NullPointerException(AlienManager.class.getSimpleName());
         } else if (userMapper == null) {
             throw new NullPointerException(VenadUserMapper.class.getSimpleName());
-        } else if (loginCodeManager == null) {
-            throw new NullPointerException(LoginCodeManager.class.getSimpleName());
         } else if (heatMap == null) {
             throw new NullPointerException(FleetHeatMap.class.getSimpleName());
         }// TODO: ship provider
@@ -77,7 +73,6 @@ public enum Orion implements UniverseFactory {
         INSTANCE.priceProvider = priceProvider;
         INSTANCE.userMapper = userMapper;
         INSTANCE.planner = new PathPlanner(quadProvider, holeProvider);
-        INSTANCE.loginCodeManager = loginCodeManager;
         INSTANCE.heatMap = heatMap;
     }
 
@@ -163,14 +158,6 @@ public enum Orion implements UniverseFactory {
     }
 
 
-
-    public LoginCodeManager getLoginCodeManager() {
-        assert checkInitialized();
-        return this.loginCodeManager;
-    }
-
-
-
     public VenadUserMapper getUserMapper() {
         checkInitialized();
         return this.userMapper;
@@ -194,7 +181,7 @@ public enum Orion implements UniverseFactory {
                 try {
                     final Sector s = QuadrantUtils.parse(st.getValue());
                     result.add(s);
-                } catch (ParseException e) {
+                } catch (final ParseException e) {
                     e.printStackTrace();
                     throw new RuntimeException(e);
                 }

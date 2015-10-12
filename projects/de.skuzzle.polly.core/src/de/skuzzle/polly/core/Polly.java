@@ -12,7 +12,6 @@ import javax.naming.ConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.opencv.core.Core;
 
 import de.skuzzle.polly.core.commandline.AbstractArgumentParser;
 import de.skuzzle.polly.core.commandline.ParameterException;
@@ -35,12 +34,8 @@ import de.skuzzle.polly.sdk.resources.LocaleProvider;
 
 public class Polly {
 
-    static {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-    }
-
     public static Version getPollyVersion() {
-        String version = Polly.class.getPackage().getImplementationVersion();
+        final String version = Polly.class.getPackage().getImplementationVersion();
         if (version == null) {
             return new Version(DEVELOP_VERSION);
         } else {
@@ -51,13 +46,13 @@ public class Polly {
 
 
     public static String getPid() {
-        String[] parts = ManagementFactory.getRuntimeMXBean().getName()
+        final String[] parts = ManagementFactory.getRuntimeMXBean().getName()
             .split("@"); //$NON-NLS-1$
         return parts[0];
     }
 
-    
-    
+
+
     /**
      * If polly transforms into SkyNet, the assumption is that this method returns true.
      * In order to save the world, any polly start up is prevented in this case.
@@ -66,7 +61,7 @@ public class Polly {
     private static boolean isSkynet() {
         return false;
     }
-    
+
 
 
     public static File getPollyPath() {
@@ -81,20 +76,20 @@ public class Polly {
     public static String getCommandLine() {
         return commandLine;
     }
-    
-    
-    
+
+
+
     public static String[] getCommandLineArgs() {
         return commandLineArgs;
     }
-    
-    
+
+
 
     public final static String DEVELOP_VERSION = "0.9.1 - dev"; //$NON-NLS-1$
     public final static String CONFIG_FULL_PATH = "cfg/polly.cfg"; //$NON-NLS-1$
     public final static String CONFIG_FILE_NAME = "polly.cfg"; //$NON-NLS-1$
     public final static String CONFIG_DIR = "./cfg"; //$NON-NLS-1$
-    
+
     /**
      * The polly plugin folder. That folder is not supposed to change
      */
@@ -106,7 +101,7 @@ public class Polly {
 
     /**
      * Start polly.
-     * 
+     *
      * @param args The commandline arguments passed to polly. This array may be empty.
      * @throws Exception If launching fails.
      */
@@ -116,9 +111,9 @@ public class Polly {
             System.out.println("Polly transformed into SkyNet. Saving the world by immediate shut down");
             return;
         }
-        
+
         commandLineArgs = args;
-        for (String arg : args) {
+        for (final String arg : args) {
             if (arg.indexOf(' ') != -1) {
                 commandLine += "\"" + arg + "\" "; //$NON-NLS-1$ //$NON-NLS-2$
             } else {
@@ -127,62 +122,62 @@ public class Polly {
         }
         commandLine = commandLine.trim();
 
-        ProxyClassLoader parentCl = (ProxyClassLoader) 
+        final ProxyClassLoader parentCl = (ProxyClassLoader)
                     Thread.currentThread().getContextClassLoader();
-        
+
         new Polly(args, parentCl);
     }
 
 
 
     public Polly(String[] args, ProxyClassLoader parentCl) {
-        ConfigurationProviderImpl configurationProvider = 
+        final ConfigurationProviderImpl configurationProvider =
             new ConfigurationProviderImpl(new File(CONFIG_DIR));
-        
+
         Configuration pollyCfg = null;
         try {
             System.out.println("Loading main configuration file"); //$NON-NLS-1$
-            pollyCfg = configurationProvider.open(CONFIG_FILE_NAME, true, 
+            pollyCfg = configurationProvider.open(CONFIG_FILE_NAME, true,
                     ConfigurationProviderImpl.NOP_VALIDATOR);
-            
+
             System.out.println("Configuring Logger..."); //$NON-NLS-1$
             PropertyConfigurator.configure(
                 pollyCfg.readString(Configuration.LOG_CONFIG_FILE));
-            
+
             System.out.println("Logger configured. Switching to using logger"); //$NON-NLS-1$
-            
+
             // initialize Locale as early as possible
             LocaleProvider.initLocale(pollyCfg);
-            
-            
-            if (!this.lockInstance(new File("polly.lck"))) { //$NON-NLS-1$
+
+
+            if (!lockInstance(new File("polly.lck"))) { //$NON-NLS-1$
                 System.out.println(MSG.alreadyRunning);
                 return;
             }
-            
-            
-        } catch (FileNotFoundException e) {
-            System.out.println(MSG.bind(MSG.configError, 
+
+
+        } catch (final FileNotFoundException e) {
+            System.out.println(MSG.bind(MSG.configError,
                     MSG.bind(MSG.configErrorReason1, CONFIG_FILE_NAME)));
             e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println(MSG.bind(MSG.configError, 
+        } catch (final IOException e) {
+            System.out.println(MSG.bind(MSG.configError,
                     MSG.bind(MSG.configErrorReason2, e.getMessage())));
             e.printStackTrace();
-        } catch (ConfigurationException e) {
-            System.out.println(MSG.bind(MSG.configError, 
+        } catch (final ConfigurationException e) {
+            System.out.println(MSG.bind(MSG.configError,
                     MSG.bind(MSG.configErrorReason3, e.getMessage())));
             e.printStackTrace();
         }
-        
+
         if (pollyCfg == null) {
             return;
         }
-        
+
         logger.info(""); //$NON-NLS-1$
         logger.info(""); //$NON-NLS-1$
         logger.info(""); //$NON-NLS-1$
-        this.parseArguments(args, pollyCfg);
+        parseArguments(args, pollyCfg);
 
         logger.info("----------------------------------------------"); //$NON-NLS-1$
         logger.info("new polly session started!"); //$NON-NLS-1$
@@ -191,7 +186,7 @@ public class Polly {
         logger.info("Config file read from '" + CONFIG_FULL_PATH + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         logger.info("Polly command line arguments: " + Arrays.toString(args)); //$NON-NLS-1$
         logger.info("(Canonical: " + getCommandLine() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-        Version version = getPollyVersion();
+        final Version version = getPollyVersion();
         logger.info("Version info: " + version); //$NON-NLS-1$
         logger.info("Java Version: " + System.getProperty("java.version")); //$NON-NLS-1$ //$NON-NLS-2$
         logger.info("Java Home: " + System.getProperty("java.home")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -201,52 +196,52 @@ public class Polly {
 
         /*
          * POLLY INITIALIZATION:
-         * 
+         *
          * Each component to be set up has its own Module subclass which does
          * all the set up things for this component. While setting up, this
          * module can provide all components that it has initialized to the
          * other modules that will be setup next. This process is executed by
          * the ModuleBlackboard.
-         * 
+         *
          * Each module must report its dependencies and provided components in the
          * constructor. Given that information for every single module, the module
-         * loader determines the order in which the modules are loaded so all 
+         * loader determines the order in which the modules are loaded so all
          * dependencies can be satisfied.
-         * 
+         *
          * The modules to be loaded must be specified in the modules.cfg as pointed to
          * by Configuration#MODULES_CONFIG.
          */
 
         // Setup Module loader
-        ModuleLoader loader = new DefaultModuleLoader();
+        final ModuleLoader loader = new DefaultModuleLoader();
 
         // Modules:
         // Register all the modules. The order in which they are registered does not
-        // matter as the setup order will be automatically determined by the 
-        // ModuleLoader. Just make sure your module properly reports all its 
+        // matter as the setup order will be automatically determined by the
+        // ModuleLoader. Just make sure your module properly reports all its
         // dependencies!
-        
-        
+
+
         try {
             // This parses the modules.cfg and instantiates all listed modules
-            File modulesCfg = new File(pollyCfg.readString(Configuration.MODULE_CONFIG));
+            final File modulesCfg = new File(pollyCfg.readString(Configuration.MODULE_CONFIG));
             ModuleBootstrapper.prepareModuleLoader(loader, modulesCfg);
-            
+
             // add startup module
             new AnonymousModule(loader, configurationProvider, parentCl);
-            
+
             logger.info("Running setup for all modules..."); //$NON-NLS-1$
             loader.runSetup();
             logger.info("Setup done. Now executing each module..."); //$NON-NLS-1$
             loader.runModules();
-            
+
             if (pollyCfg.readBoolean(Configuration.DEBUG_MODE)) {
                 loader.exportToDot(new File("modules.dot")); //$NON-NLS-1$
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.fatal("Crucial component failed to load!", e); //$NON-NLS-1$
-            
-            ShutdownManagerImpl s = loader.requireNow(ShutdownManagerImpl.class);
+
+            final ShutdownManagerImpl s = loader.requireNow(ShutdownManagerImpl.class);
             s.shutdown(true);
         } finally {
             loader.dispose();
@@ -255,42 +250,42 @@ public class Polly {
         logger.info("Polly succesfully set up."); //$NON-NLS-1$
     }
 
-    
-    
+
+
     @Module(startUp = true, provides = {
         @Provide(component = ShutdownManagerImpl.class),
         @Provide(component = ConfigurationProviderImpl.class),
         @Provide(component = ProxyClassLoader.class),
     })
     private static class AnonymousModule extends AbstractProvider {
-        
-        private ConfigurationProviderImpl configurationProvider;
-        private ProxyClassLoader parentCl;
-        
-        
-        public AnonymousModule(ModuleLoader loader, 
-                ConfigurationProviderImpl configurationProvider,  
+
+        private final ConfigurationProviderImpl configurationProvider;
+        private final ProxyClassLoader parentCl;
+
+
+        public AnonymousModule(ModuleLoader loader,
+                ConfigurationProviderImpl configurationProvider,
                 ProxyClassLoader parentCl) {
             super("ROOT_PROVIDER", loader, true); //$NON-NLS-1$
             this.parentCl = parentCl;
             this.configurationProvider = configurationProvider;
         }
 
-        
-        
+
+
         @Override
         public void setup() throws SetupException {
-            this.provideComponent(this.configurationProvider);
-            this.provideComponent(this.parentCl);
-            this.provideComponent(new ShutdownManagerImpl());
-            
+            provideComponent(this.configurationProvider);
+            provideComponent(this.parentCl);
+            provideComponent(new ShutdownManagerImpl());
+
             if (this.configurationProvider.getRootConfiguration().readBoolean(
                 Configuration.DEBUG_MODE)) {
-                logger.warn(
+                this.logger.warn(
                     "\n\nPOLLY DEBUG MODE IS ENABLED. DISABLE THIS IN PRODUCTIVE SYSTEMS!\n\n"); //$NON-NLS-1$
             }
         }
-        
+
     }
 
 
@@ -307,6 +302,7 @@ public class Polly {
             if (fileLock != null) {
                 Runtime.getRuntime().addShutdownHook(new Thread() {
 
+                    @Override
                     public void run() {
                         try {
                             fileLock.release();
@@ -314,14 +310,14 @@ public class Polly {
                             if (!existed) {
                                 file.delete();
                             }
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             e.printStackTrace();
                         }
                     }
                 });
                 return true;
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -331,12 +327,12 @@ public class Polly {
 
     private void parseArguments(String[] args, Configuration config) {
         try {
-            AbstractArgumentParser parser = new PollyArgumentParser(config);
+            final AbstractArgumentParser parser = new PollyArgumentParser(config);
             parser.parse(args);
             commandLine = parser.getCanonicalArguments();
-        } catch (ParameterException e) {
+        } catch (final ParameterException e) {
             logger.warn(e.getMessage(), e);
-            this.printHelp();
+            printHelp();
             System.exit(0);
         }
     }
@@ -356,7 +352,7 @@ public class Polly {
         System.out.println(MSG.paramClose);
         try {
             System.in.read();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
     }

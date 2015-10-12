@@ -22,7 +22,6 @@ import javax.imageio.ImageIO;
 import polly.rx.MSG;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.orion.FleetHeatMap;
-import polly.rx.core.orion.LoginCode;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.OrionException;
 import polly.rx.core.orion.PortalDecorator;
@@ -403,7 +402,7 @@ public class OrionController extends PollyController {
             final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
             try {
                 ImageIO.write(quadImg, "png", out); //$NON-NLS-1$
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
             return out;
@@ -515,7 +514,7 @@ public class OrionController extends PollyController {
         final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
         try {
             ImageIO.write(map, "png", out); //$NON-NLS-1$
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
         final InputStream in = new FastByteArrayInputStream(out);
@@ -555,7 +554,7 @@ public class OrionController extends PollyController {
             final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
             try {
                 ImageIO.write(image, "png", out); //$NON-NLS-1$
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
             final InputStream in = new FastByteArrayInputStream(out);
@@ -563,16 +562,6 @@ public class OrionController extends PollyController {
         }
         return HttpAnswers.newStringAnswer(404, "image not found"); //$NON-NLS-1$
     }
-
-    @Get(API_REQUEST_CODE)
-    public HttpAnswer requestCode(@Param("user") String user, @Param("pw") String pw)
-            throws AlternativeAnswerException {
-        //this.checkLogin(user, pw);
-        final LoginCode code = Orion.INSTANCE.getLoginCodeManager().getCurrentCode();
-        return new GsonHttpAnswer(200, code);
-    }
-
-
 
     @Get(value = PAGE_ORION, name = ORION_NAME_KEY)
     @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, MSG.FAMILY, REVORIX_CATEGORY_KEY,
@@ -648,7 +637,7 @@ public class OrionController extends PollyController {
         try {
             Orion.INSTANCE.getAlienManager().removeRace(ar);
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
-        } catch (OrionException e) {
+        } catch (final OrionException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
     }
@@ -675,7 +664,7 @@ public class OrionController extends PollyController {
             final DBAlienRace race = (DBAlienRace) Orion.INSTANCE.getAlienManager().addRace(
                     name, type, aggressive);
             return new GsonHttpAnswer(200, new AddRaceResult(race.getId()));
-        } catch (OrionException e) {
+        } catch (final OrionException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
     }
@@ -692,7 +681,7 @@ public class OrionController extends PollyController {
 
             Orion.INSTANCE.getAlienManager().addSpawn(name, race, s);
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
     }
@@ -706,7 +695,7 @@ public class OrionController extends PollyController {
             final AlienSpawn spawn = Orion.INSTANCE.getAlienManager().getSpawnById(spawnId);
             Orion.INSTANCE.getAlienManager().removeAlienSpawn(spawn);
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
     }
@@ -1069,7 +1058,7 @@ public class OrionController extends PollyController {
                             sector.getOwnFleets());
                     Orion.INSTANCE.getFleetTracker().updateFleets(reporter,
                             sector.getFleets());
-                } catch (OrionException e) {
+                } catch (final OrionException e) {
                     e.printStackTrace();
                 }
             }
